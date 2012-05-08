@@ -1,0 +1,55 @@
+----
+Register 
+final String name, 
+int content,  // 
+boolean load, write, reset. 
+
+-----
+Memory 
+private final int size, 
+private final int wordsize (the same as registers)
+private HashMap<String, Integer> 
+private boolean read_write //true => read, false => write
+private int currentAddress
+
+setCurrentAddress(int newAddress)
+readWord(int address)
+writeWord(int address, int newWord) 
+setRead()
+setWrite()
+reset();
+
+
+-----
+MUX
+private final int size
+private int[] inputs
+private int select
+getOutput()
+setSelect(int newSelect)
+setInput(int[] newInput)
+
+
+---- 
+ALU_Command
+String operation
+Object[] operands
+run()
+
+
+----
+/* Initialize the ALU_Command and executes it */
+Controller 
+
+runALU_Command
+
+
+----
+File (Instruction memory)
+Initialize the label hash index. 
+a file is a list of strings. 
+
+/*
+Notes 
+Incrementing pc by four ?
+*/
