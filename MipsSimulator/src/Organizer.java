@@ -7,21 +7,25 @@ public class Organizer {
 	RegistersFile registers;
 	ALU alu;
 	MUX aluMUX,regMUX,pcMUX;
+        DataMemory memory;
+        Wire ALU_MUXControl = new Wire ("Control","ALU_MUX","",0);
+        Wire REG_MUXControl = new Wire ("Control","REG_MUX","",0);
         public Organizer()
         {
             
         }
-        public void setInstances(ALU alu, ALU_MUX aluMUX, RegistersFile registers, InstructionMemory instructionMemory)
+        public void setInstances(ALU alu, ALU_MUX aluMUX, RegistersFile registers, InstructionMemory instructionMemory, REG_MUX regMUX, DataMemory memory)
         {
             this.alu = alu;
             this.aluMUX = aluMUX;
             this.registers = registers;
             this.instructionMemory = instructionMemory;
+            this.regMUX = regMUX;
+            this.memory = memory;
         }
 	public Organizer(ArrayList<String> file){
 		instructionMemory = new InstructionMemory(file);
-		registers = new RegistersFile();
-		alu = new ALU();
+//		alu = new ALU();
 		aluMUX = new ALU_MUX(alu);
 	// TODO	regMUX = new MUX();
 	// TODO	pcMUX = new MUX();
@@ -31,38 +35,74 @@ public class Organizer {
             System.out.println("Setting the controls for " + operation);
 		if(operation.equalsIgnoreCase("add")){
 			alu.setControl(1);
-			aluMUX.setSelect(0);
+                        this.ALU_MUXControl.setData(0);
+                        this.REG_MUXControl.setData(0);
+                        aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
+			//aluMUX.setSelect(0);
+                        //regMUX.setSelect(0);
 		}else if(operation.equalsIgnoreCase("addi")){
 			alu.setControl(1);
-			aluMUX.setSelect(1);
+                        this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("sub")){
 			alu.setControl(2);
-			aluMUX.setSelect(0);
+			this.ALU_MUXControl.setData(0);
+                        this.REG_MUXControl.setData(0);
+                        aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("lw")){
-			alu.setControl(1); // TODO 
+			alu.setControl(8); // TODO 
+//                        regMUX.setSelect(1);
+                        memory.setRead();
 		}else if(operation.equalsIgnoreCase("sw")){
-			alu.setControl(1); // TODO
+			alu.setControl(9); // TODO
+  //                      regMUX.setSelect(1);
+                        memory.setWrite();
 		}else if(operation.equalsIgnoreCase("sll")){
 			alu.setControl(6);
-                        aluMUX.setSelect(1);
+                        this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("srl")){
 			alu.setControl(5);
-                        aluMUX.setSelect(1);
+                     this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("and")){
 			alu.setControl(4);
-			aluMUX.setSelect(0);
+			this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("andi")){
 			alu.setControl(4);
-			aluMUX.setSelect(1);
+			  this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("or")){
 			alu.setControl(3);
-			aluMUX.setSelect(0);
+			this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("ori")){
 			alu.setControl(3);
-			aluMUX.setSelect(1);
+			  this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("nor")){
 			alu.setControl(7);
-			aluMUX.setSelect(0);
+			this.ALU_MUXControl.setData(1);
+                        this.REG_MUXControl.setData(0);
+			aluMUX.setSelect(this.ALU_MUXControl);
+                        regMUX.setSelect(this.REG_MUXControl);
 		}else if(operation.equalsIgnoreCase("beq")){
 			alu.setControl(1); // TODO
 		}else if(operation.equalsIgnoreCase("bne")){
