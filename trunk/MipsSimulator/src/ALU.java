@@ -6,15 +6,41 @@ public class ALU {
 	int isZero;
         Organizer controller;
         RegistersFile registerFile;
-        public void setInstances(Organizer controller, RegistersFile registerFile)
+        REG_MUX regMUX;
+        DataMemory memory;
+        Wire ALURegister;
+        Wire ALU_MUXRegister;
+        Wire writeRegister;
+        Wire ALUFirstOperand;
+        Wire ALUSecondOperand;
+        Wire REG_MUXFirstInput = new Wire ("ALU", "REG_MUX","", 0);
+        public ALU(Wire ALURegister, Wire ALU_MUXRegister, Wire writeRegister)
+        {
+            this.ALURegister = ALURegister;
+            this.ALU_MUXRegister = ALU_MUXRegister;
+            this.writeRegister = writeRegister;
+        }
+        public void setALUFirstOperand(Wire ALUFirstOperand)
+        {
+            this.ALUFirstOperand = ALUFirstOperand;
+            System.out.println("ALU First Operand set to " +ALUFirstOperand.toString());
+        }
+           public void setALUSecondOperand(Wire ALUSecondOperand)
+        {
+            this.ALUSecondOperand = ALUSecondOperand;
+            System.out.println("ALU Second Operand set to " +ALUSecondOperand.toString());
+        }
+        public void setInstances(Organizer controller, RegistersFile registerFile, REG_MUX regMUX, DataMemory memory)
         {
             this.controller = controller;
             this.registerFile = registerFile;
+            this.regMUX = regMUX;
+            this.memory = memory;
         }
-	public void setOp1(int n){
-	    System.out.println("Setting operand 1 to " + n);	
-            op1 = n;
-	}
+	//public void setOp1(int n){
+	  //  System.out.println("Setting operand 1 to " + n);	
+            //op1 = n;
+	//}
 	public void setOp2(int n){
 		op2 = n;
 	}
@@ -36,26 +62,60 @@ public class ALU {
 	public void doOperation(){
             System.out.println("Doing the operation ");
 		if(aluOp == 1){
-			res = op1 + op2;
+			res = this.ALUFirstOperand.getData() + this.ALUSecondOperand.getData();
+                        System.out.println("The result is " + res);
+                        this.REG_MUXFirstInput.setData(res);
+                         this.regMUX.setInput(0,this.REG_MUXFirstInput);
+                         this.regMUX.forward();
+                this.writeRegister();
 		}else if(aluOp == 2){
-			res = op1 - op2;
+			res = this.ALUFirstOperand.getData() - this.ALUSecondOperand.getData();;
+                        this.REG_MUXFirstInput.setData(res);
+                         this.regMUX.setInput(0,this.REG_MUXFirstInput);
+                         this.regMUX.forward();
+                this.writeRegister();
 		}else if(aluOp == 3){
-			res = op1 | op2;
+			res = this.ALUFirstOperand.getData() | this.ALUSecondOperand.getData();;
+                         this.REG_MUXFirstInput.setData(res);
+                         this.regMUX.setInput(0,this.REG_MUXFirstInput);
+                         this.regMUX.forward();
+                this.writeRegister();
 		}else if(aluOp == 4){
-			res = op1 & op2;
+			res = this.ALUFirstOperand.getData() & this.ALUSecondOperand.getData();;
+                        this.REG_MUXFirstInput.setData(res);
+                         this.regMUX.setInput(0,this.REG_MUXFirstInput);
+                         this.regMUX.forward();
+                this.writeRegister();
 		}else if(aluOp == 5){
-			res = op1 >> op2;
+			res = this.ALUFirstOperand.getData() >> this.ALUSecondOperand.getData();;
+                         this.REG_MUXFirstInput.setData(res);
+                         this.regMUX.setInput(0,this.REG_MUXFirstInput);
+                         this.regMUX.forward();
+                this.writeRegister();
 		}else if(aluOp == 6){
-			res = op1 << op2;
+			res = this.ALUFirstOperand.getData() << this.ALUSecondOperand.getData();;
+                         this.REG_MUXFirstInput.setData(res);
+                         this.regMUX.setInput(0,this.REG_MUXFirstInput);
+                         this.regMUX.forward();
+                this.writeRegister();
 		}else if(aluOp == 7){
-			res = ~(op1 | op2);
-		}
+			res = ~(this.ALUFirstOperand.getData() | this.ALUSecondOperand.getData());
+                         this.REG_MUXFirstInput.setData(res);
+                         this.regMUX.setInput(0,this.REG_MUXFirstInput);
+                         this.regMUX.forward();
+                this.writeRegister();
+		}else if(aluOp == 8){
+                    memory.setAddress((Integer)this.ALUFirstOperand.getData());
+                }else if(aluOp == 9){
+                    
+                    memory.setAddress((Integer)this.ALUFirstOperand.getData());
+                }
 		if(res == 0) 
 			isZero = 1;
 		else
 			isZero = 0;
                 System.out.println("The result of the operation is " + res);
-                this.writeRegister();
+               
 	}
 	public int getZero(){
 		return isZero;
@@ -67,6 +127,8 @@ public class ALU {
         {
             System.out.println("alu writing register");
             controller.setRegisterWriteControl();
-            registerFile.write(res);
+           // registerFile.write(res);
+         //   regMUX.setInput(0, this.res);
+           // regMUX.forward();
         }
 }
