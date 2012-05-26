@@ -176,19 +176,44 @@ public class InstructionMemory {
         } else if (op.equalsIgnoreCase("jr")) {
             alu.setControl(1); //TODO
         } else if (op.equalsIgnoreCase("slt")) {
-            alu.setControl(1); //TODO
+            WriteRegister.setDestinationRegister(arr[1]);
+            WriteRegister.setData(this.registerFile.registers.get(arr[1]));
+            ALU_MUXRegister.setDestinationRegister(arr[3]);
+            ALU_MUXRegister.setData(this.registerFile.registers.get(arr[3]));
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("slti")) {
-            alu.setControl(1); // TODO
+            WriteRegister.setDestinationRegister(arr[1]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
+            this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
+            this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("sltu")) {
-            alu.setControl(1); // TODO
+            WriteRegister.setDestinationRegister(arr[1]);
+            WriteRegister.setData(this.registerFile.registers.get(arr[1]));
+            ALU_MUXRegister.setDestinationRegister(arr[3]);
+            ALU_MUXRegister.setData(this.registerFile.registers.get(arr[3]));
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("sltui")) {
-            alu.setControl(1); // TODO
+            WriteRegister.setDestinationRegister(arr[1]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
+            this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
+            this.registerFile.setFirstOperandDestination();
         }
         if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw"))) {
             this.aluMUX.forward();
         }
 
         this.alu.doOperation();
+        
     }
 
     public static void main(String[] abbas) {
@@ -201,6 +226,8 @@ public class InstructionMemory {
         file.add("andi $t0 $t0 1");
         file.add("sw $t0 12($t0)");
         file.add("lw $t1 12($t0)");
+        file.add("addi $t1 $t1 1");
+        file.add("sltui $t2 $t1 -3");
         InstructionMemory is = new InstructionMemory(file);
         System.out.println(is.registerFile.registers.get("$t0"));
         System.out.println(is.registerFile.registers.get("$t1"));

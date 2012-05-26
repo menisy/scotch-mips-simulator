@@ -109,6 +109,32 @@ public class ALU {
         } else if (aluOp == 9) {
 
             memory.setAddress((Integer) this.ALUFirstOperand.getData());
+        } else if (aluOp == 13)
+        {
+            System.out.println("First Operand data is " + this.ALUFirstOperand.getData());
+            System.out.println("Second Operand data is " + this.ALUSecondOperand.getData());
+            res = 0;
+            if (this.ALUFirstOperand.getData() < this.ALUSecondOperand.getData())
+                res = 1;
+            System.out.println("The result is " + res);
+            this.REG_MUXFirstInput.setData(res);
+            this.regMUX.setInput(0, this.REG_MUXFirstInput);
+            this.regMUX.forward();
+            this.writeRegister();
+        }
+  
+        else if (aluOp == 14)
+        {
+                    System.out.println("First Operand data is " + this.ALUFirstOperand.getData());
+            System.out.println("Second Operand data is " + this.ALUSecondOperand.getData());
+            res = 0;
+            if (Math.abs(this.ALUFirstOperand.getData()) < Math.abs(this.ALUSecondOperand.getData()))
+                res = 1;
+            System.out.println("The result is " + res);
+            this.REG_MUXFirstInput.setData(res);
+            this.regMUX.setInput(0, this.REG_MUXFirstInput);
+            this.regMUX.forward();
+            this.writeRegister();
         }
         if (res == 0) {
             isZero = 1;
