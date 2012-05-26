@@ -2,11 +2,14 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.security.sasl.AuthorizeCallback;
+
 public class InstructionMemory {
 
     private int pc;
     boolean done;
     HashMap<Integer, String> instructions = new HashMap<Integer, String>();
+    HashMap<String, Integer> labels = new HashMap<String, Integer>();
     Organizer controller = new Organizer();
     Wire ALURegister = new Wire("Instruction Memory", "Register File", "", 0);
     Wire ALU_MUXRegister = new Wire("Instruction Memory", "Register File", "", 0);
@@ -36,8 +39,16 @@ public class InstructionMemory {
         System.out.println("Starting address is " + startingAddress);
         System.out.println("File size is " + file.size());
         for (int i = 1, j = startingAddress; i <= file.size(); i++, j += 4) {
-            instructions.put(j, file.get(i - 1));
-            System.out.println("putting in slot " + j + " instruction " + file.get(i - 1));
+        	String line = file.get(i-1);
+        	if (line.contains(":")) {
+        		String[] split = line.split(": ");
+        		System.out.println("adding labels " + split[0] +  " to " + split[1] + " line (" + j + ")");
+        		labels.put(split[0], j);
+        		instructions.put(j, split[1]);
+        	}else {
+	            instructions.put(j, file.get(i - 1));
+	            System.out.println("putting in slot " + j + " instruction " + file.get(i - 1));
+        	}
         }
         controller.setInstances(alu, aluMUX, registerFile, this, regMUX, memory,this.pcMUX);
         registerFile.setInstances(alu, aluMUX, memory);
@@ -183,13 +194,14 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("beq")) {
-              ALU_MUXRegister.setDestinationRegister(arr[2]);
+            ALU_MUXRegister.setDestinationRegister(arr[2]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[2]));
             ALURegister.setData(this.registerFile.registers.get(arr[1]));
             ALURegister.setDestinationRegister(arr[1]);
             this.registerFile.setFirstOperandDestination();
             this.registerFile.setSecondOperandDestination();
-            this.jump.setData(Integer.parseInt(arr[3]));
+//            this.jump.setData(Integer.parseInt(arr[3]));
+            this.jump.setData(getJumpValue(arr[3]));
             this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("bne")) {
             alu.setControl(1); // TODO
@@ -240,6 +252,26 @@ public class InstructionMemory {
         this.pcMUX.forward();
         
     }
+    
+    /**
+     * This method gets the value which a label points at. If there
+     * are no values, -1 is returned. 
+     * The method first checks if the argument passed can be be parsed 
+     * to an integer, if yes, it jumps directly to that value
+     * Author: Yahia
+     */
+    public Integer getJumpValue(String arg) {
+    	try {
+    		Integer jumpValue = Integer.parseInt(arg);
+    		return jumpValue;
+    	}catch (Exception e) {
+    		System.out.println("Jumping to " + arg);
+    		if(labels.get(arg) != null)
+    			return labels.get(arg);
+    		else 
+    			return -1;
+    	}
+    }
 
     public static void main(String[] abbas) {
         ArrayList<String> file = new ArrayList<String>();
@@ -255,9 +287,9 @@ public class InstructionMemory {
         file.add("sltui $t2 $t1 -3");
       //  file.add("and $t1 $t0 $t0");*/
         file.add("add $t0 $t0 $t0");
-        file.add("beq $t1 $t1 12");
+        file.add("beq $t1 $t1 ZA3");
         // the following instruction won't be executed, we used branch dumbass!
-        file.add("add $t2 $zero $t0");
+        file.add("ZA3: add $t2 $zero $t0");
         file.add("end");
         InstructionMemory is = new InstructionMemory(file);
         System.out.println(is.registerFile.registers.get("$t0"));
