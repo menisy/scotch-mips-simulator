@@ -36,7 +36,16 @@ public class DataMemory {
     public void read() {
         if (this.read) {
             System.out.println("Memory reading at address  " + this.address);
-            this.REG_MUXInput.setData(this.memory.get(this.address));
+            int readData = 0;
+            try
+            {
+                readData = this.memory.get(this.address);
+            }
+            catch (Exception e)
+            {
+                System.out.println("The address is empty");
+            }
+            this.REG_MUXInput.setData(readData);
             this.regMUX.setInput(1, this.REG_MUXInput);
             this.regMUX.forward();
         }
