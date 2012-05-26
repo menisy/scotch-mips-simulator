@@ -130,13 +130,29 @@ public class Organizer {
         } else if (operation.equalsIgnoreCase("jr")) {
             alu.setControl(1); //TODO
         } else if (operation.equalsIgnoreCase("slt")) {
-            alu.setControl(1); //TODO
+            this.ALUControl.setData(13);
+            this.ALU_MUXControl.setData(0);
+            this.REG_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl);
+            regMUX.setSelect(this.REG_MUXControl);
         } else if (operation.equalsIgnoreCase("slti")) {
-            alu.setControl(1); // TODO
+            this.ALUControl.setData(13);
+            this.ALU_MUXControl.setData(1);
+            this.REG_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl);
+            regMUX.setSelect(this.REG_MUXControl);
         } else if (operation.equalsIgnoreCase("sltu")) {
-            alu.setControl(1); // TODO
+            this.ALUControl.setData(14);
+            this.ALU_MUXControl.setData(0);
+            this.REG_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl);
+            regMUX.setSelect(this.REG_MUXControl);
         } else if (operation.equalsIgnoreCase("sltui")) {
-            alu.setControl(1); // TODO
+            this.ALUControl.setData(14);
+            this.ALU_MUXControl.setData(1);
+            this.REG_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl);
+            regMUX.setSelect(this.REG_MUXControl);
         }
 
     }
