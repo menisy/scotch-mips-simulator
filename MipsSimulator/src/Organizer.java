@@ -148,27 +148,55 @@ public class Organizer {
               this.PC_MUXControl.setData(0);
             this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("beq")) {
-            this.PC_MUXControl.setData(1);
-            this.ALUControl.setData(8);
+            this.PC_MUXControl.setData(0);
+            this.ALUControl.setData(10);
             this.pcMUX.setSelect(this.PC_MUXControl);
+            this.ALU_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl);
         } else if (operation.equalsIgnoreCase("bne")) {
-            alu.setControl(1); // TODO
-        } else if (operation.equalsIgnoreCase("j")) {
-            alu.setControl(1); // TODO
-        } else if (operation.equalsIgnoreCase("jal")) {
-            alu.setControl(1); // TODO
-        } else if (operation.equalsIgnoreCase("jr")) {
-            alu.setControl(1); //TODO
+            this.PC_MUXControl.setData(0);
+            this.ALUControl.setData(11);
+            this.pcMUX.setSelect(this.PC_MUXControl);
+            this.ALU_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl);
+
+        } else if (operation.equalsIgnoreCase("jr"))
+        {
+            this.PC_MUXControl.setData(1);
+            this.ALUControl.setData(12);
+            this.pcMUX.setSelect(this.PC_MUXControl);
+            this.ALU_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl);
+        }
+        else if (operation.equalsIgnoreCase("j")) {
+              this.PC_MUXControl.setData(1);
+            this.ALUControl.setData(12);
+            this.pcMUX.setSelect(this.PC_MUXControl);
+            this.ALU_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl); 
+
+        } else if (operation.equalsIgnoreCase("jal")) {   
+            this.PC_MUXControl.setData(1);
+            this.ALUControl.setData(16);
+            this.PC_MUXControl.setData(1);
+            this.pcMUX.setSelect(this.PC_MUXControl);
+            this.ALU_MUXControl.setData(0);
+            aluMUX.setSelect(this.ALU_MUXControl); 
+            
         } else if (operation.equalsIgnoreCase("slt")) {
             this.ALUControl.setData(13);
             this.ALU_MUXControl.setData(0);
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+             this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("slti")) {
             this.ALUControl.setData(13);
             this.ALU_MUXControl.setData(1);
             this.REG_MUXControl.setData(0);
+            this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
         } else if (operation.equalsIgnoreCase("sltu")) {
@@ -177,12 +205,16 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("sltui")) {
             this.ALUControl.setData(14);
             this.ALU_MUXControl.setData(1);
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("beq"))
         {
             this.ALUControl.setData(14);

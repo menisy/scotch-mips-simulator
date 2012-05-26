@@ -49,6 +49,10 @@ public class RegistersFile {
 
 
     }
+    public void setFirstOperandDirectDestination()
+    {
+          this.ALUFirstOperand.setData(this.ALURegister.getData());
+    }
 
     public void setSecondOperandDestination() {
         String register = this.ALU_MUXRegister.getDestinationRegister();

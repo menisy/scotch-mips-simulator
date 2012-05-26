@@ -129,13 +129,34 @@ public class ALU {
             this.regMUX.forward();
             this.writeRegister();
         }
-        else if (aluOp == 8)
+        else if (aluOp == 10)
         {
+            System.out.println("ALU Executing BEQ with " + this.ALUFirstOperand.getData()+ " and " + this.ALUSecondOperand.getData());
             if (this.ALUFirstOperand.getData() == this.ALUSecondOperand.getData())
             {
+                System.out.println("BRANCHING BEQ");
                 this.PCMUXControl.setData(1);
                 this.pcMUX.setSelect(this.PCMUXControl);
             }
+        }
+        else if (aluOp == 11)
+        {
+            System.out.println("ALU Executing BNE with " + this.ALUFirstOperand.getData()+ " and " + this.ALUSecondOperand.getData());
+             if (this.ALUFirstOperand.getData() != this.ALUSecondOperand.getData())
+            {
+                System.out.println("BNE branching");
+                this.PCMUXControl.setData(1);
+                this.pcMUX.setSelect(this.PCMUXControl);
+            }
+        }
+        else if (aluOp == 16)
+        {
+            res = this.ALUFirstOperand.getData();
+            System.out.println("the next instruction is " + this.ALUFirstOperand.getData());
+             this.REG_MUXFirstInput.setData(res);
+            this.regMUX.setInput(0, this.REG_MUXFirstInput);
+            this.regMUX.forward();
+            this.writeRegister();   
         }
   
         else if (aluOp == 14)

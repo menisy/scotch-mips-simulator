@@ -75,6 +75,9 @@ public class InstructionMemory {
     }
 
     public void fetchInstruction() {
+          System.out.println(registerFile.registers.get("$t0"));
+        System.out.println(registerFile.registers.get("$s0"));
+        System.out.println(registerFile.registers.get("$t2"));
         System.out.println("The PC MUX output is " + this.PC_MUXOut.getData());
         System.out.println("Fetching instruction at " + pc);
         String instruction = instructions.get(this.PC_MUXOut.getData());
@@ -204,13 +207,29 @@ public class InstructionMemory {
             this.jump.setData(getJumpValue(arr[3]));
             this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("bne")) {
-            alu.setControl(1); // TODO
+             ALU_MUXRegister.setDestinationRegister(arr[2]);
+            ALU_MUXRegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setData(this.registerFile.registers.get(arr[1]));
+            ALURegister.setDestinationRegister(arr[1]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
+            this.jump.setData(getJumpValue(arr[3]));
+            this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("j")) {
-            alu.setControl(1); // TODO
+            this.jump.setData(getJumpValue(arr[1]));
+            this.pcMUX.setInput(1, jump);        
         } else if (op.equalsIgnoreCase("jal")) {
-            alu.setControl(1); // TODO
+            WriteRegister.setDestinationRegister("$ra");
+            WriteRegister.setData(this.PC_MUXOut.getData());
+            System.out.println("pc mux out is " + this.PC_MUXOut.getData());
+            ALURegister.setData(this.PC_MUXOut.getData());
+            this.registerFile.setFirstOperandDirectDestination();
+            this.jump.setData(getJumpValue(arr[1]));
+            this.pcMUX.setInput(1, jump);
+            
         } else if (op.equalsIgnoreCase("jr")) {
-            alu.setControl(1); //TODO
+            this.jump.setData(this.registerFile.registers.get(arr[1]));
+            this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("slt")) {
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -244,7 +263,7 @@ public class InstructionMemory {
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
             this.registerFile.setFirstOperandDestination();
         }
-        if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw") || arr[0].equalsIgnoreCase("beq"))) {
+        if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw"))) {
             this.aluMUX.forward();
         }
 
@@ -286,14 +305,27 @@ public class InstructionMemory {
         file.add("addi $t1 $t1 1");
         file.add("sltui $t2 $t1 -3");
       //  file.add("and $t1 $t0 $t0");*/
-        file.add("add $t0 $t0 $t0");
-        file.add("beq $t1 $t1 ZA3");
+        //file.add("add $t0 $t0 $t0");
+      //  file.add("bne $t1 $t0 8");
+       // file.add("end");
+        //file.add("addi $t1 $t0 2");
+        //file.add("addi $t0 $t0 1");
         // the following instruction won't be executed, we used branch dumbass!
-        file.add("ZA3: add $t2 $zero $t0");
-        file.add("end");
+       // file.add("ZA3: add $t2 $zero $t0");
+       // file.add("jal 4");
+       // file.add("addi $t1 $t1 1");
+      //  file.add("end");
+        file.add("addi $t0 $zero 0");
+        file.add("slti $t2 $t0 10");
+        file.add("beq $t2 $zero 22");
+        file.add("add $s0 $s0 $s1");
+        file.add("addi $t0 $t0 1");
+        file.add("jal 4");
+        file.add(" end");
         InstructionMemory is = new InstructionMemory(file);
         System.out.println(is.registerFile.registers.get("$t0"));
-        System.out.println(is.registerFile.registers.get("$t1"));
+        System.out.println(is.registerFile.registers.get("$s0"));
         System.out.println(is.registerFile.registers.get("$t2"));
+        System.out.println(is.registerFile.registers.get("$ra"));
     }
 }
