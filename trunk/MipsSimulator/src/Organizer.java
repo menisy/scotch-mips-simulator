@@ -182,6 +182,8 @@ public class Organizer {
             this.pcMUX.setSelect(this.PC_MUXControl);
             this.ALU_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl); 
+              this.REG_MUXControl.setData(0);
+            regMUX.setSelect(this.REG_MUXControl);
             
         } else if (operation.equalsIgnoreCase("slt")) {
             this.ALUControl.setData(13);
