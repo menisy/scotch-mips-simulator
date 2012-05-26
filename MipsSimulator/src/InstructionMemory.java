@@ -78,68 +78,93 @@ public class InstructionMemory {
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
             ALU_MUXRegister.setDestinationRegister(arr[3]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[3]));
-            this.registerFile.setFirstOperandDestination(arr[2]);
-            this.registerFile.setSecondOperandDestination(arr[3]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
+            //this.registerFile.setFirstOperandDestination(arr[2]);
+            //this.registerFile.setSecondOperandDestination(arr[3]);
         } else if (op.equalsIgnoreCase("addi")) {
             WriteRegister.setDestinationRegister(arr[1]);
-            this.registerFile.setFirstOperandDestination(arr[2]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
             this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
+            this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("sub")) {
-           WriteRegister.setDestinationRegister(arr[1]);
+            WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
             ALU_MUXRegister.setDestinationRegister(arr[3]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[3]));
-            this.registerFile.setFirstOperandDestination(arr[2]);
-            this.registerFile.setSecondOperandDestination(arr[3]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("lw")) {
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("sw")) {
             ALURegister.setDestinationRegister(arr[2]);
             ALU_MUXRegister.setDestinationRegister(arr[1]);
+            this.registerFile.setFirstOperandDestination();
+
             registerFile.forward();
         } else if (op.equalsIgnoreCase("sll")) {
-          WriteRegister.setDestinationRegister(arr[1]);
-            this.registerFile.setFirstOperandDestination(arr[2]);
+            WriteRegister.setDestinationRegister(arr[1]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
             this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
+            this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("srl")) {
             WriteRegister.setDestinationRegister(arr[1]);
-            this.registerFile.setFirstOperandDestination(arr[2]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
             this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
+            this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("and")) {
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
             ALU_MUXRegister.setDestinationRegister(arr[3]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[3]));
-            this.registerFile.setFirstOperandDestination(arr[2]);
-            this.registerFile.setSecondOperandDestination(arr[3]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("andi")) {
-           WriteRegister.setDestinationRegister(arr[1]);
-            this.registerFile.setFirstOperandDestination(arr[2]);
+            WriteRegister.setDestinationRegister(arr[1]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
             this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
+            this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("or")) {
-               WriteRegister.setDestinationRegister(arr[1]);
+            WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
             ALU_MUXRegister.setDestinationRegister(arr[3]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[3]));
-            this.registerFile.setFirstOperandDestination(arr[2]);
-            this.registerFile.setSecondOperandDestination(arr[3]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("ori")) {
-       WriteRegister.setDestinationRegister(arr[1]);
-            this.registerFile.setFirstOperandDestination(arr[2]);
+            WriteRegister.setDestinationRegister(arr[1]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
             this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
+            this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("nor")) {
-              WriteRegister.setDestinationRegister(arr[1]);
+            WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
             ALU_MUXRegister.setDestinationRegister(arr[3]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[3]));
-            this.registerFile.setFirstOperandDestination(arr[2]);
-            this.registerFile.setSecondOperandDestination(arr[3]);
+            ALURegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setDestinationRegister(arr[2]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("beq")) {
             alu.setControl(1); // TODO
         } else if (op.equalsIgnoreCase("bne")) {
@@ -159,7 +184,9 @@ public class InstructionMemory {
         } else if (op.equalsIgnoreCase("sltui")) {
             alu.setControl(1); // TODO
         }
-        this.aluMUX.forward();
+        if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw"))) {
+            this.aluMUX.forward();
+        }
 
         this.alu.doOperation();
     }
@@ -169,9 +196,11 @@ public class InstructionMemory {
         file.add("sll $t0 $t0 1");
         file.add("add $t0 $t0 $t0");
         file.add("sub $t1 $t0 $t0");
-        
+
         file.add("or $t0 $t0 $t0");
-       // file.add("andi $t0 $t0 1");
+        file.add("andi $t0 $t0 1");
+        file.add("sw $t0 12($t0)");
+        file.add("lw $t1 12($t0)");
         InstructionMemory is = new InstructionMemory(file);
         System.out.println(is.registerFile.registers.get("$t0"));
         System.out.println(is.registerFile.registers.get("$t1"));
