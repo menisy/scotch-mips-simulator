@@ -16,11 +16,18 @@ public class ALU {
     Wire ALUSecondOperand;
     Wire REG_MUXFirstInput = new Wire("ALU", "REG_MUX", "", 0);
     Wire ALUControl;
+    PC_MUX pcMUX;
+    Wire PCMUXControl = new Wire ("ALU", "PC_MUX", "", 0);
 
     public ALU(Wire ALURegister, Wire ALU_MUXRegister, Wire writeRegister) {
         this.ALURegister = ALURegister;
         this.ALU_MUXRegister = ALU_MUXRegister;
         this.writeRegister = writeRegister;
+    }
+    
+    public void setPCMUX(PC_MUX pcMUX)
+    {
+        this.pcMUX = pcMUX;
     }
 
     public void setALUControl(Wire ALUControl) {
@@ -121,6 +128,14 @@ public class ALU {
             this.regMUX.setInput(0, this.REG_MUXFirstInput);
             this.regMUX.forward();
             this.writeRegister();
+        }
+        else if (aluOp == 8)
+        {
+            if (this.ALUFirstOperand.getData() == this.ALUSecondOperand.getData())
+            {
+                this.PCMUXControl.setData(1);
+                this.pcMUX.setSelect(this.PCMUXControl);
+            }
         }
   
         else if (aluOp == 14)
