@@ -11,12 +11,13 @@ public class Organizer {
     DataMemory memory;
     Wire ALU_MUXControl = new Wire("Control", "ALU_MUX", "", 0);
     Wire REG_MUXControl = new Wire("Control", "REG_MUX", "", 0);
+    Wire PC_MUXControl = new Wire("Control", "PC_MUX", "", 0); 
     Wire ALUControl = new Wire("Control", "ALU", "", 0);
 
     public Organizer() {
     }
 
-    public void setInstances(ALU alu, ALU_MUX aluMUX, RegistersFile registers, InstructionMemory instructionMemory, REG_MUX regMUX, DataMemory memory) {
+    public void setInstances(ALU alu, ALU_MUX aluMUX, RegistersFile registers, InstructionMemory instructionMemory, REG_MUX regMUX, DataMemory memory, PC_MUX pcMUX) {
         this.alu = alu;
         this.alu.setALUControl(this.ALUControl);
         this.aluMUX = aluMUX;
@@ -24,6 +25,7 @@ public class Organizer {
         this.instructionMemory = instructionMemory;
         this.regMUX = regMUX;
         this.memory = memory;
+        this.pcMUX = pcMUX;
     }
 
     public Organizer(ArrayList<String> file) {
@@ -45,6 +47,8 @@ public class Organizer {
             regMUX.setSelect(this.REG_MUXControl);
             //aluMUX.setSelect(0);
             //regMUX.setSelect(0);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("addi")) {
             //alu.setControl(1);
             this.ALUControl.setData(1);
@@ -52,6 +56,8 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("sub")) {
             //alu.setControl(2);
             this.ALUControl.setData(2);
@@ -59,17 +65,23 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("lw")) {
 //          alu.setControl(8); // TODO 
             this.ALUControl.setData(8);
             this.REG_MUXControl.setData(1);
             regMUX.setSelect(this.REG_MUXControl);
             memory.setRead();
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("sw")) {
             //alu.setControl(9); // TODO
             this.ALUControl.setData(9);
             //regMUX.setSelect(1);
             memory.setWrite();
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("sll")) {
             //alu.setControl(6);
             this.ALUControl.setData(6);
@@ -77,6 +89,8 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("srl")) {
             //alu.setControl(5);
             this.ALUControl.setData(5);
@@ -84,13 +98,19 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("and")) {
             //alu.setControl(4);
             this.ALUControl.setData(4);
-            this.ALU_MUXControl.setData(1);
+            this.ALU_MUXControl.setData(0);
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("andi")) {
             //alu.setControl(4);
             this.ALUControl.setData(4);
@@ -98,13 +118,17 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("or")) {
             //alu.setControl(3);
             this.ALUControl.setData(3);
-            this.ALU_MUXControl.setData(1);
+            this.ALU_MUXControl.setData(0);
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("ori")) {
             //alu.setControl(3);
             this.ALUControl.setData(3);
@@ -112,15 +136,21 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("nor")) {
             //alu.setControl(7);
             this.ALUControl.setData(7);
-            this.ALU_MUXControl.setData(1);
+            this.ALU_MUXControl.setData(0);
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+              this.PC_MUXControl.setData(0);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("beq")) {
-            alu.setControl(1); // TODO
+            this.PC_MUXControl.setData(1);
+            this.ALUControl.setData(8);
+            this.pcMUX.setSelect(this.PC_MUXControl);
         } else if (operation.equalsIgnoreCase("bne")) {
             alu.setControl(1); // TODO
         } else if (operation.equalsIgnoreCase("j")) {
@@ -153,8 +183,12 @@ public class Organizer {
             this.REG_MUXControl.setData(0);
             aluMUX.setSelect(this.ALU_MUXControl);
             regMUX.setSelect(this.REG_MUXControl);
+        } else if (operation.equalsIgnoreCase("beq"))
+        {
+            this.ALUControl.setData(14);
+            this.ALU_MUXControl.setData(1);
+            aluMUX.setSelect(this.ALU_MUXControl);
         }
-
     }
 
     public void setRegisterWriteControl() {

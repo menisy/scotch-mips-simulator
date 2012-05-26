@@ -15,10 +15,16 @@ public class InstructionMemory {
     ALU alu = new ALU(ALURegister, ALU_MUXRegister, WriteRegister);
     ALU_MUX aluMUX = new ALU_MUX(alu);
     REG_MUX regMUX = new REG_MUX(registerFile);
+    Wire sequential = new Wire ("PC" , "PC_MUX", "", pc);
+    Wire jump = new Wire ("PC", "PC_MUX", "" , 0);
+    Wire PC_MUXOut = new Wire("PC_MUX", "PC", "", 0);
+    PC_MUX pcMUX;
     DataMemory memory = new DataMemory(regMUX);
     Wire ALU_MUXSecondInput = new Wire("Instrucion Memory", "ALU_MUX", "", 0);
 
     public InstructionMemory(ArrayList<String> file) {
+        this.pcMUX = new PC_MUX(this,this.PC_MUXOut);
+        this.alu.setPCMUX(this.pcMUX);
         String firstLine = file.get(0);
         String[] arr = firstLine.split(" ");
         int startingAddress;
@@ -33,7 +39,7 @@ public class InstructionMemory {
             instructions.put(j, file.get(i - 1));
             System.out.println("putting in slot " + j + " instruction " + file.get(i - 1));
         }
-        controller.setInstances(alu, aluMUX, registerFile, this, regMUX, memory);
+        controller.setInstances(alu, aluMUX, registerFile, this, regMUX, memory,this.pcMUX);
         registerFile.setInstances(alu, aluMUX, memory);
         alu.setInstances(controller, registerFile, regMUX, memory);
         this.start();
@@ -49,7 +55,7 @@ public class InstructionMemory {
 
     public void start() {
         while (!this.isDone()) {
-            if (instructions.get(pc) == null) {
+            if ((instructions.get(this.PC_MUXOut.getData()) == null) || (instructions.get(this.PC_MUXOut.getData()).equalsIgnoreCase("end"))) {
                 this.done = true;
                 break;
             }
@@ -58,14 +64,25 @@ public class InstructionMemory {
     }
 
     public void fetchInstruction() {
+        System.out.println("The PC MUX output is " + this.PC_MUXOut.getData());
         System.out.println("Fetching instruction at " + pc);
-        String instruction = instructions.get(pc);
+        String instruction = instructions.get(this.PC_MUXOut.getData());
         String[] arr = instruction.split(" ");
         if (arr[0].equalsIgnoreCase("end")) {
-            done = true;
+            //done = true;
         }
-        pc += 4;
+        else
+        {
+             pc += 4;
+        this.sequential.setData(this.PC_MUXOut.getData() + 4);
+        this.pcMUX.setInput(0, this.sequential);
         this.decode(instruction);
+        }
+       
+    }
+    public void setPC(int pc)
+    {
+        this.pc = pc;
     }
 
     public void decode(String instruction) {
@@ -166,7 +183,14 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("beq")) {
-            alu.setControl(1); // TODO
+              ALU_MUXRegister.setDestinationRegister(arr[2]);
+            ALU_MUXRegister.setData(this.registerFile.registers.get(arr[2]));
+            ALURegister.setData(this.registerFile.registers.get(arr[1]));
+            ALURegister.setDestinationRegister(arr[1]);
+            this.registerFile.setFirstOperandDestination();
+            this.registerFile.setSecondOperandDestination();
+            this.jump.setData(Integer.parseInt(arr[3]));
+            this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("bne")) {
             alu.setControl(1); // TODO
         } else if (op.equalsIgnoreCase("j")) {
@@ -208,26 +232,33 @@ public class InstructionMemory {
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
             this.registerFile.setFirstOperandDestination();
         }
-        if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw"))) {
+        if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw") || arr[0].equalsIgnoreCase("beq"))) {
             this.aluMUX.forward();
         }
 
         this.alu.doOperation();
+        this.pcMUX.forward();
         
     }
 
     public static void main(String[] abbas) {
         ArrayList<String> file = new ArrayList<String>();
-        file.add("sll $t0 $t0 1");
+       /* file.add("sll $t0 $t0 1");
         file.add("add $t0 $t0 $t0");
         file.add("sub $t1 $t0 $t0");
 
         file.add("or $t0 $t0 $t0");
-        file.add("andi $t0 $t0 1");
+        file.add("and $t0 $t0 $t0");
         file.add("sw $t0 12($t0)");
         file.add("lw $t1 12($t0)");
         file.add("addi $t1 $t1 1");
         file.add("sltui $t2 $t1 -3");
+      //  file.add("and $t1 $t0 $t0");*/
+        file.add("add $t0 $t0 $t0");
+        file.add("beq $t1 $t1 12");
+        // the following instruction won't be executed, we used branch dumbass!
+        file.add("add $t2 $zero $t0");
+        file.add("end");
         InstructionMemory is = new InstructionMemory(file);
         System.out.println(is.registerFile.registers.get("$t0"));
         System.out.println(is.registerFile.registers.get("$t1"));
