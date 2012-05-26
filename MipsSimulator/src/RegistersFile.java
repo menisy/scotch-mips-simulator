@@ -143,7 +143,7 @@ public class RegistersFile {
         registers.put("$at", 0);
         registers.put("$v0", 0);
         registers.put("$v1", 0);
-        registers.put("$a0", 0);
+        registers.put("$a0", 4);
         registers.put("$a1", 0);
         registers.put("$a2", 0);
         registers.put("$a3", 0);

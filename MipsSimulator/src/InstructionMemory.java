@@ -222,7 +222,8 @@ public class InstructionMemory {
             WriteRegister.setDestinationRegister("$ra");
             WriteRegister.setData(this.PC_MUXOut.getData());
             System.out.println("pc mux out is " + this.PC_MUXOut.getData());
-            ALURegister.setData(this.PC_MUXOut.getData());
+            ALURegister.setData(this.PC_MUXOut.getData() + 4);
+            this.ALU_MUXRegister.setData(0);;
             this.registerFile.setFirstOperandDirectDestination();
             this.jump.setData(getJumpValue(arr[1]));
             this.pcMUX.setInput(1, jump);
@@ -263,7 +264,7 @@ public class InstructionMemory {
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
             this.registerFile.setFirstOperandDestination();
         }
-        if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw"))) {
+        if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw") || arr[0].equalsIgnoreCase("jal"))) {
             this.aluMUX.forward();
         }
 
@@ -315,17 +316,36 @@ public class InstructionMemory {
        // file.add("jal 4");
        // file.add("addi $t1 $t1 1");
       //  file.add("end");
-        file.add("addi $t0 $zero 0");
-        file.add("slti $t2 $t0 10");
-        file.add("beq $t2 $zero 22");
-        file.add("add $s0 $s0 $s1");
-        file.add("addi $t0 $t0 1");
-        file.add("jal 4");
-        file.add(" end");
+       // file.add("addi $t0 $zero 0");
+        //file.add("slti $t2 $t0 10");
+        //file.add("beq $t2 $zero 22");
+        //file.add("add $s0 $s0 $s1");
+        //file.add("addi $t0 $t0 1");
+        //file.add("jal 4");
+        //file.add(" end");
+        file.add("jal FACT");
+        file.add("end");
+        file.add("FACT: addi $sp $sp -8");
+        file.add("sw $ra 4($sp)");
+        file.add("sw $a0 0($sp)");
+        file.add("slti $t0 $a0 1");
+        file.add("beq $t0 $zero L1");
+        file.add("addi $v0 $zero 1");
+        file.add("addi $sp $sp 8");
+        file.add("jr $ra");
+        file.add("L1: addi $a0 $a0 -1");
+        file.add("jal FACT");
+        file.add("lw $a0 0($sp)");
+        file.add("lw $ra 4($sp)");
+        file.add("addi $sp $sp 8");
+        file.add("add $v0 $a0 $v0");
+        file.add("jr $ra");
+        
         InstructionMemory is = new InstructionMemory(file);
         System.out.println(is.registerFile.registers.get("$t0"));
         System.out.println(is.registerFile.registers.get("$s0"));
         System.out.println(is.registerFile.registers.get("$t2"));
         System.out.println(is.registerFile.registers.get("$ra"));
+        System.out.println(is.registerFile.registers.get("$v0"));
     }
 }
