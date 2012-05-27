@@ -1,5 +1,7 @@
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.security.sasl.AuthorizeCallback;
@@ -12,6 +14,7 @@ public class InstructionMemory {
     boolean done;
     HashMap<Integer, String> instructions = new HashMap<Integer, String>();
     HashMap<String, Integer> labels = new HashMap<String, Integer>();
+    HashMap<String, Integer> data = new HashMap<String, Integer>();
     Organizer controller = new Organizer();
     Wire ALURegister = new Wire("Instruction Memory", "Register File", "", 0);
     Wire ALU_MUXRegister = new Wire("Instruction Memory", "Register File", "", 0);
@@ -43,13 +46,52 @@ public class InstructionMemory {
         }
         System.out.println("Starting address is " + startingAddress);
         System.out.println("File size is " + file.size());
+        boolean dataSeg = false;
         for (int i = 1, j = startingAddress; i <= file.size(); i++, j += 4) {
             String line = file.get(i - 1);
-            if (line.contains(":")) {
+            // AUTHOR YAHIA
+            if (line.contains(".data")) {
+            	System.out.println("IN THE DATA SEGMENT");
+            	dataSeg = true;
+            	j-=4;
+            	continue;
+            }
+            else if (line.contains(".text")) {
+            	System.out.println("IN THE TEXT SEGMENT");
+            	dataSeg = false;
+            	j-=4;
+            	continue;
+            }
+            
+            if (dataSeg) {            	
+            	System.out.println("$$$$$$$$$$$$$ IN DATA SEG");
+                String[] split = line.split(": ",2);
+                System.out.println(Arrays.toString(split));	
+                if (split.length < 3 && split[1].startsWith(".word")) {
+                	int value = 0;
+                	String[] split2 = split[1].split(" ");
+                	System.out.println(Arrays.toString(split2));
+                	if (split2[1].startsWith("0x"))
+                	{
+                		// I am really sorry for the following line :'( 
+                		// it's the simplest. It's evil I know :'(, :'(
+                		BigInteger bi = new BigInteger(split2[1].substring(2), 16);
+                		value = bi.intValue();
+                	}else 
+                	{
+                		value = Integer.parseInt(split2[1]);
+                	}
+                	System.out.println("adding " + split[0] + " => " + value);
+                	data.put(split[0], value);
+                }
+                
+            } else if (line.contains(":")) {
                 String[] split = line.split(": ");
                 System.out.println("adding labels " + split[0] + " to " + split[1] + " line (" + j + ")");
                 labels.put(split[0], j);
                 instructions.put(j, split[1]);
+                
+            // AUTHOR YAHIA END 
             } else {
                 if (file.get(i - 1).contains("ORG")) {
                     String[] splittedInstruction = file.get(i - 1).split(" ");
