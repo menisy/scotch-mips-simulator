@@ -12,8 +12,6 @@ package gui;
 
 import java.awt.FlowLayout;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import logic.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -25,6 +23,7 @@ import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -358,12 +357,14 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         JFrame result = new JFrame("Simulation result");
         result.setLayout(new FlowLayout());
+        JScrollPane scpane = new JScrollPane();
         ArrayList<String> resultList = InstructionMemory.getWireLogGUI();
         JTextArea ta = new JTextArea();
         for(String s : resultList){
             ta.append(s);
         }
-        result.add(ta);
+        scpane.add(ta);
+        result.add(scpane);
         result.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
