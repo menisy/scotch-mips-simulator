@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /*
@@ -13,6 +14,7 @@ public class DataMemory {
 
     boolean read = false;
     boolean write = false;
+    Wire addressWire;
     Wire readWire;
     Wire writeWire;
     REG_MUX regMUX;
@@ -21,9 +23,11 @@ public class DataMemory {
     HashMap<Integer, Integer> memory = new HashMap<Integer, Integer>();
     Wire dataWire;
     Wire REG_MUXInput = new Wire("Data Memory", "REG_MUX", "", 0);
+    InstructionMemory instructionMemory;
 
-    public DataMemory(REG_MUX regMUX) {
+    public DataMemory(REG_MUX regMUX, InstructionMemory instructionMemory) {
         this.regMUX = regMUX;
+        this.instructionMemory = instructionMemory;
     }
 
     public void setReadWire(Wire readWire) {
@@ -45,7 +49,7 @@ public class DataMemory {
                 System.out.println("Memory reading at address  " + this.address);
                 int readData = 0;
                 try {
-                    readData = this.memory.get(this.address);
+                    readData = this.memory.get(this.addressWire.getData());
                 } catch (Exception e) {
                     System.out.println("The address is empty");
                 }
@@ -57,6 +61,9 @@ public class DataMemory {
         } catch (Exception e) {
             System.out.println("Can't read");
         }
+        this.instructionMemory.wiresLog.get(this.instructionMemory.COMMANDS_COUNTER).add(new ArrayList<String>());
+        this.instructionMemory.wiresLog.get(this.instructionMemory.COMMANDS_COUNTER).get(3).add(
+                "REG MUX SECOND INPUT: " + this.REG_MUXInput.toString());
 
     }
 
@@ -64,10 +71,11 @@ public class DataMemory {
      * The function writes data in the memory
      */
     public void write() {
+        System.out.println("WRITE CALLED");
         try {
             if (this.writeWire.getData() == 1) {
                 System.out.println("Memory writing ");
-                this.memory.put(this.address, this.dataWire.getData());
+                this.memory.put(this.addressWire.getData(), this.dataWire.getData());
                 System.out.println("Address " + this.address + " in the memory is now " + this.memory.get(this.address));
             }
             this.writeWire.setData(0);
@@ -87,9 +95,18 @@ public class DataMemory {
         System.out.println("Data set to " + data);
     }
 
-    public void setAddress(Integer address) {
+    public void setAdssdress(Integer address) {
         System.out.println("Address set to " + address);
         this.address = address;
+        this.read();
+        this.write();
+    }
+    public void setAddressWire(Wire addressWire)
+    {
+        
+        this.addressWire = addressWire;
+        this.instructionMemory.wiresLog.get(this.instructionMemory.COMMANDS_COUNTER).get(2).add("ADDRESS WIRE: " + this.addressWire);
+        System.out.println("address wire set to " + this.addressWire.toString());
         this.read();
         this.write();
     }

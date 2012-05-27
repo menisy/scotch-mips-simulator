@@ -13,11 +13,12 @@ public class ALU {
     Wire ALU_MUXRegister;
     Wire writeRegister;
     Wire ALUFirstOperand;
-    Wire ALUSecondOperand;
+    Wire ALUSecondOperand = new Wire("ALU_MUX", "ALU", "", 0);
     Wire REG_MUXFirstInput = new Wire("ALU", "REG_MUX", "", 0);
     Wire ALUControl;
     PC_MUX pcMUX;
     Wire PCMUXControl = new Wire("ALU", "PC_MUX", "", 0);
+    Wire addressWire = new Wire("ALU", "Data Memory", "", 0);
 
     public ALU(Wire ALURegister, Wire ALU_MUXRegister, Wire writeRegister) {
         this.ALURegister = ALURegister;
@@ -51,6 +52,7 @@ public class ALU {
     public void setALUFirstOperand(Wire ALUFirstOperand) {
         this.ALUFirstOperand = ALUFirstOperand;
         System.out.println("ALU First Operand set to " + ALUFirstOperand.toString());
+
     }
 
     /**
@@ -61,6 +63,7 @@ public class ALU {
     public void setALUSecondOperand(Wire ALUSecondOperand) {
         this.ALUSecondOperand = ALUSecondOperand;
         System.out.println("ALU Second Operand set to " + ALUSecondOperand.toString());
+
     }
 
     /**
@@ -135,10 +138,13 @@ public class ALU {
             this.regMUX.forward();
             this.writeRegister();
         } else if (aluOp == 8) {
-            memory.setAddress((Integer) this.ALUFirstOperand.getData());
+            this.addressWire.setData(this.ALUFirstOperand.getData());
+            memory.setAddressWire(this.addressWire);
+            // memory.setAddressWire((Integer) this.ALUFirstOperand.getData());
         } else if (aluOp == 9) {
-
-            memory.setAddress((Integer) this.ALUFirstOperand.getData());
+            this.addressWire.setData(this.ALUFirstOperand.getData());
+            memory.setAddressWire(this.addressWire);
+            //memory.setAddress((Integer) this.ALUFirstOperand.getData());
         } else if (aluOp == 13) {
             System.out.println("First Operand data is " + this.ALUFirstOperand.getData());
             System.out.println("Second Operand data is " + this.ALUSecondOperand.getData());
@@ -190,7 +196,13 @@ public class ALU {
         } else {
             isZero = 0;
         }
+        this.controller.instructionMemory.wiresLog.get(
+                this.controller.instructionMemory.COMMANDS_COUNTER).get(1).add(
+                "PC MUX CONTROL: " + this.PCMUXControl.toString());
         System.out.println("The result of the operation is " + res);
+        this.controller.instructionMemory.wiresLog.get(this.controller.instructionMemory.COMMANDS_COUNTER).get(2).add("REG MUX FIRST INPUT: " + this.REG_MUXFirstInput.toString());
+        this.controller.instructionMemory.wiresLog.get(this.controller.instructionMemory.COMMANDS_COUNTER).get(2).add("ALU FIRST OPERAND: " + this.ALUFirstOperand.toString());
+        this.controller.instructionMemory.wiresLog.get(this.controller.instructionMemory.COMMANDS_COUNTER).get(2).add("ALU SECOND OPERAND " + this.ALUSecondOperand.toString());
 
     }
 

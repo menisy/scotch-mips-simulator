@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +80,18 @@ public class RegistersFile {
     public void setWriteRegisterData(Wire writeRegisterData) {
         System.out.println("Setting write control");
         this.writeRegisterData = writeRegisterData;
+        this.memory.instructionMemory.wiresLog.get(this.memory.instructionMemory.COMMANDS_COUNTER).add(new ArrayList<String>());
+        if(this.memory.instructionMemory.wiresLog.get(this.memory.instructionMemory.COMMANDS_COUNTER)
+                .size() == 5)
+        {
+            this.memory.instructionMemory.wiresLog.get(this.memory.instructionMemory.COMMANDS_COUNTER)
+                    .get(4).add("REGISTER WRITE: " + this.writeRegisterData.toString());
+        }
+        else
+        {
+              this.memory.instructionMemory.wiresLog.get(this.memory.instructionMemory.COMMANDS_COUNTER)
+                    .get(3).add("REGISTER WRITE: " + this.writeRegisterData.toString());
+        }
         this.write(writeRegisterData.getData());
     }
 

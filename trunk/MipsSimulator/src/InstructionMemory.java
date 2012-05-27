@@ -6,6 +6,8 @@ import javax.security.sasl.AuthorizeCallback;
 
 public class InstructionMemory {
 
+    static ArrayList<ArrayList<ArrayList<String>>> wiresLog = new ArrayList<ArrayList<ArrayList<String>>>();
+    static int COMMANDS_COUNTER = 0;
     private int pc;
     boolean done;
     HashMap<Integer, String> instructions = new HashMap<Integer, String>();
@@ -22,10 +24,12 @@ public class InstructionMemory {
     Wire jump = new Wire("PC", "PC_MUX", "", 0);
     Wire PC_MUXOut = new Wire("PC_MUX", "PC", "", 0);
     PC_MUX pcMUX;
-    DataMemory memory = new DataMemory(regMUX);
+    DataMemory memory;
     Wire ALU_MUXSecondInput = new Wire("Instrucion Memory", "ALU_MUX", "", 0);
 
     public InstructionMemory(ArrayList<String> file) {
+        this.memory = new DataMemory(this.regMUX, this);
+        this.wiresLog.add(new ArrayList<ArrayList<String>>());
         this.pcMUX = new PC_MUX(this, this.PC_MUXOut);
         this.alu.setPCMUX(this.pcMUX);
         String firstLine = file.get(0);
@@ -99,6 +103,7 @@ public class InstructionMemory {
      * @see decode()
      */
     public void fetchInstruction() {
+
         System.out.println(registerFile.registers.get("$t0"));
         System.out.println(registerFile.registers.get("$s0"));
         System.out.println(registerFile.registers.get("$t2"));
@@ -106,6 +111,8 @@ public class InstructionMemory {
         System.out.println("Fetching instruction at " + pc);
         String instruction = instructions.get(this.PC_MUXOut.getData());
         String[] arr = instruction.split(" ");
+        this.wiresLog.get(COMMANDS_COUNTER).add(new ArrayList<String>());
+        this.wiresLog.get(COMMANDS_COUNTER).get(0).add("PC wire: " + this.PC_MUXOut.toString());
         if (arr[0].equalsIgnoreCase("end")) {
             //done = true;
         } else {
@@ -114,6 +121,8 @@ public class InstructionMemory {
             this.pcMUX.setInput(0, this.sequential);
             this.decode(instruction);
         }
+        COMMANDS_COUNTER++;
+        this.wiresLog.add(new ArrayList<ArrayList<String>>());
 
     }
 
@@ -137,6 +146,8 @@ public class InstructionMemory {
         System.out.println("the instruction is " + instruction);
         String[] arr = instruction.split(" ");
         String op = arr[0];
+        this.wiresLog.get(COMMANDS_COUNTER).add(new ArrayList<String>());
+        this.wiresLog.get(COMMANDS_COUNTER).add(new ArrayList<String>());
         this.controller.setControls(arr[0]);
         if (op.equalsIgnoreCase("add")) {
             WriteRegister.setDestinationRegister(arr[1]);
@@ -301,6 +312,12 @@ public class InstructionMemory {
         if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw") || arr[0].equalsIgnoreCase("jal"))) {
             this.aluMUX.forward();
         }
+        this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU FIRST INPUT: " + this.ALURegister.toString());
+        this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU MUX INPUT: " + this.ALU_MUXRegister.toString());
+        this.wiresLog.get(COMMANDS_COUNTER).get(1).add("WRITE REGISTER: " + this.WriteRegister.toString());
+        this.wiresLog.get(COMMANDS_COUNTER).get(1).add("JUMP: " + this.jump.toString());
+        this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU MUX SECOND INPUT: " + this.ALU_MUXSecondInput.toString());
+
 
         this.alu.doOperation();
         this.pcMUX.forward();
@@ -325,6 +342,21 @@ public class InstructionMemory {
                 return -1;
             }
         }
+    }
+
+    public void printWiresLog() {
+        int cycles = 0;
+        for (int i = 0; i < this.wiresLog.size(); i++) {
+            System.out.println("For command " + i);
+            for (int j = 0; j < this.wiresLog.get(i).size(); j++) {
+                cycles++;
+                System.out.println("For Cycle " + j);
+                for (int k = 0; k < this.wiresLog.get(i).get(j).size(); k++) {
+                    System.out.println(this.wiresLog.get(i).get(j).get(k));
+                }
+            }
+        }
+        System.out.println("The program used " + cycles + " cycles");
     }
 
     public static void main(String[] abbas) {
@@ -371,6 +403,8 @@ public class InstructionMemory {
         file.add("addi $sp $sp 8");
         file.add("add $v0 $a0 $v0");
         file.add("jr $ra");
+        // file.add("lw $t0 0($t0)");
+
 
 
         InstructionMemory is = new InstructionMemory(file);
@@ -379,5 +413,6 @@ public class InstructionMemory {
         System.out.println(is.registerFile.registers.get("$t2"));
         System.out.println(is.registerFile.registers.get("$ra"));
         System.out.println(is.registerFile.registers.get("$v0"));
+        is.printWiresLog();
     }
 }
