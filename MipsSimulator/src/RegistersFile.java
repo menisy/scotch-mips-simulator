@@ -19,6 +19,7 @@ public class RegistersFile {
     Wire ALU_MUXFirstOperand;
     Wire writeRegisterData;
     Wire data = new Wire("Register File", "Data Memory", "", 0);
+    Wire regWriteControl;
 
     public RegistersFile(Wire ALURegister, Wire ALU_MUXRegister, Wire WriteRegister) {
         this.ALURegister = ALURegister;
@@ -29,6 +30,10 @@ public class RegistersFile {
         this.populate();
     }
 
+    /**
+     * The Method sets the ALU first operand using the data in the wire coming
+     * from the register file
+     */
     public void setFirstOperandDestination() {
         String register = this.ALURegister.getDestinationRegister();
         if (register.contains("(")) {
@@ -49,11 +54,15 @@ public class RegistersFile {
 
 
     }
-    public void setFirstOperandDirectDestination()
-    {
-          this.ALUFirstOperand.setData(this.ALURegister.getData());
+
+    public void setFirstOperandDirectDestination() {
+        this.ALUFirstOperand.setData(this.ALURegister.getData());
     }
 
+    /**
+     * The Method sets the ALU first operand using the data in the wire coming
+     * from the register file
+     */
     public void setSecondOperandDestination() {
         String register = this.ALU_MUXRegister.getDestinationRegister();
         System.out.println("Setting second operand destination with register " + register);
@@ -68,6 +77,7 @@ public class RegistersFile {
     }
 
     public void setWriteRegisterData(Wire writeRegisterData) {
+        System.out.println("Setting write control");
         this.writeRegisterData = writeRegisterData;
         this.write(writeRegisterData.getData());
     }
@@ -79,16 +89,30 @@ public class RegistersFile {
         this.alu.setALUFirstOperand(this.ALUFirstOperand);
     }
 
-    public int read(String reg) {
-        return registers.get(reg);
+    /**
+     * The Method write a value in the write register
+     *
+     * @param val
+     * @return boolean
+     */
+    public boolean write(int val) {
+        System.out.println("writing");
+        if (this.regWriteControl.getData() == 1) {
+            System.out.println("Destination register is " + this.writeRegister.getDestinationRegister() + " Destination data is " + this.writeRegister.getData());
+            registers.put(this.writeRegister.getDestinationRegister(), val);
+            this.regWrite = false;
+            System.out.println("Value of Register  " + this.writeRegister + " is now " + this.registers.get(this.writeRegister));
+            this.regWriteControl.setData(0);
+            return true;
+        }
+
+        return false;
+
     }
 
-    public boolean write(int val) {
-        System.out.println("Destination register is " + this.writeRegister.getDestinationRegister() + " Destination data is " + this.writeRegister.getData());
-        registers.put(this.writeRegister.getDestinationRegister(), val);
-        this.regWrite = false;
-        System.out.println("Value of Register  " + this.writeRegister + " is now " + this.registers.get(this.writeRegister));
-        return true;
+    public void setRegWriteControl(Wire regWriteControl) {
+        System.out.println("SETTING REGISTER WRITE CONTROL TO " + this.regWriteControl);
+        this.regWriteControl = regWriteControl;
     }
 
     public void setRegWrite() {
@@ -125,6 +149,9 @@ public class RegistersFile {
      * }
      */
 
+    /**
+     * The method forwards the data wire to the memory
+     */
     public void forward() {
         System.out.println(this.ALU_MUXRegister.toString());
         String x = this.ALU_MUXRegister.getDestinationRegister();
@@ -133,11 +160,9 @@ public class RegistersFile {
         this.memory.setDataWire(this.data);
     }
 
-    public void setInputs() {
-        this.setFirstOperandDestination();
-        this.setSecondOperandDestination();
-    }
-
+    /**
+     * The Method initialises the registers.
+     */
     public void populate() { // yahia kan hy3mel trick
         registers.put("$zero", 0);
         registers.put("$at", 0);

@@ -15,10 +15,9 @@ public class REG_MUX extends MUX {
         this.registerFile = registerFile;
     }
 
-    public void setOut(int out) {
-        //todo
-    }
-
+    /**
+     * The method sets the output of the PCMUX to the selected input
+     */
     public void forward() {
         System.out.println("writing in register file");
         registerFile.setWriteRegisterData(this.getOutput());
