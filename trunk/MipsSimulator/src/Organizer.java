@@ -1,6 +1,8 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Organizer {
 
@@ -16,8 +18,11 @@ public class Organizer {
     Wire readWire = new Wire("Control", "Memory", "", 0);
     Wire writeWire = new Wire("Control", "Memory", "", 0);
     Wire registerWrite = new Wire("Control", "Register File", "", 0);
+    Wire controllerWire;
+    Map<Integer, String> controlMemory = new HashMap<Integer, String>();
 
     public Organizer() {
+        this.populate();
     }
 
     /**
@@ -41,6 +46,37 @@ public class Organizer {
         this.memory = memory;
         this.pcMUX = pcMUX;
     }
+    
+    public void setControllerWire(Wire controllerWire)
+    {
+        this.controllerWire = controllerWire;
+        System.out.println("Control wire set to " + this.controllerWire.toString());
+    }
+    
+    public void populate()
+    {
+        this.controlMemory.put(1,"add");
+        this.controlMemory.put(2,"addi");
+        this.controlMemory.put(3,"sub");
+        this.controlMemory.put(4,"lw");
+        this.controlMemory.put(5,"sw");
+        this.controlMemory.put(6,"sll");
+        this.controlMemory.put(7,"srl");
+        this.controlMemory.put(8,"and");
+        this.controlMemory.put(9,"andi");
+        this.controlMemory.put(10,"or");
+        this.controlMemory.put(11,"ori");
+        this.controlMemory.put(12,"nor");
+        this.controlMemory.put(13,"beq");
+        this.controlMemory.put(14,"bne");
+        this.controlMemory.put(15,"j");
+        this.controlMemory.put(16,"jal");
+        this.controlMemory.put(17,"jr");
+        this.controlMemory.put(18,"slt");
+        this.controlMemory.put(19,"slti");
+        this.controlMemory.put(20,"sltu");
+        this.controlMemory.put(21,"sltui");
+    }
 
     /**
      * The function takes in the operation to be executed and sets the control
@@ -48,7 +84,9 @@ public class Organizer {
      *
      * @param operation
      */
-    public void setControls(String operation) {
+    public void setControls() {
+        System.out.println("wire data is " + this.controllerWire.getData());
+        String operation = this.controlMemory.get(this.controllerWire.getData());
         System.out.println("Setting the controls for " + operation);
         if (operation.equalsIgnoreCase("add")) {
             //alu.setControl(1);
