@@ -431,12 +431,6 @@ public class InstructionMemory {
             for (int j = 0; j < this.wiresLog.get(i).size(); j++) {
                 cycles++;
                 ret.add("\tFor Cycle " + j);
-                try {
-                    Thread.sleep(animator.getSleepTime());
-                } catch (Exception e) {
-                    System.out.println("Error occured");
-                    return null;
-                }
                 for (int k = 0; k < this.wiresLog.get(i).get(j).size(); k++) {
                     ret.add("\t\t"+this.wiresLog.get(i).get(j).get(k));
                 }
