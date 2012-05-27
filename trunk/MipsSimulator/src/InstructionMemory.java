@@ -1,4 +1,5 @@
 
+import gui.Animator;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +11,7 @@ public class InstructionMemory {
     static int COMMANDS_COUNTER = 0;
     private int pc;
     boolean done;
+    Animator animator;
     HashMap<Integer, String> instructions = new HashMap<Integer, String>();
     HashMap<String, Integer> labels = new HashMap<String, Integer>();
     Organizer controller = new Organizer();
@@ -74,6 +76,10 @@ public class InstructionMemory {
         alu.setInstances(controller, registerFile, regMUX, memory);
         this.PC_MUXOut.setData(startingAddress);
         this.start();
+    }
+
+    public void setAnimator(Animator anim){
+        animator = anim;
     }
 
     /**
@@ -370,6 +376,21 @@ public class InstructionMemory {
             for (int j = 0; j < this.wiresLog.get(i).size(); j++) {
                 cycles++;
                 System.out.println("For Cycle " + j);
+                for (int k = 0; k < this.wiresLog.get(i).get(j).size(); k++) {
+                    System.out.println(this.wiresLog.get(i).get(j).get(k));
+                }
+            }
+        }
+        System.out.println("The program used " + cycles + " cycles");
+    }
+     public void getWireLogGUI() throws InterruptedException{
+        int cycles = 0;
+        for (int i = 0; i < this.wiresLog.size(); i++) {
+            System.out.println("For command " + i);
+            for (int j = 0; j < this.wiresLog.get(i).size(); j++) {
+                cycles++;
+                System.out.println("For Cycle " + j);
+                Thread.sleep(animator.getSleepTime());
                 for (int k = 0; k < this.wiresLog.get(i).get(j).size(); k++) {
                     System.out.println(this.wiresLog.get(i).get(j).get(k));
                 }
