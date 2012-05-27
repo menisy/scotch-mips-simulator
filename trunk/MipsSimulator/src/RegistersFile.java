@@ -6,9 +6,6 @@ import java.util.Map;
 public class RegistersFile {
 
     Map<String, Integer> registers = new HashMap<String, Integer>();
-    //String ALURegister;
-    //String ALU_MUXRegister;
-    //String writeRegister;
     ALU alu;
     ALU_MUX aluMUX;
     DataMemory memory;
@@ -92,7 +89,16 @@ public class RegistersFile {
               this.memory.instructionMemory.wiresLog.get(this.memory.instructionMemory.COMMANDS_COUNTER)
                     .get(3).add("REGISTER WRITE: " + this.writeRegisterData.toString());
         }
-        this.write(writeRegisterData.getData());
+       
+        try
+        {
+            this.write(writeRegisterData.getData());
+        }
+        catch(Exception e)
+        {
+            System.out.println("Write operation failed");
+            e.printStackTrace();
+        }
     }
 
     public void setInstances(ALU alu, ALU_MUX aluMUX, DataMemory memory) {
@@ -108,9 +114,11 @@ public class RegistersFile {
      * @param val
      * @return boolean
      */
-    public boolean write(int val) {
+    public boolean write(int val) throws Exception {
         System.out.println("writing");
         if (this.regWriteControl.getData() == 1) {
+            if(this.writeRegister.getDestinationRegister().equalsIgnoreCase("$zero"))
+                throw new Exception("$zero register is write protected");
             System.out.println("Destination register is " + this.writeRegister.getDestinationRegister() + " Destination data is " + this.writeRegister.getData());
             registers.put(this.writeRegister.getDestinationRegister(), val);
             this.regWrite = false;
@@ -132,35 +140,7 @@ public class RegistersFile {
         this.regWrite = true;
         System.out.println("RegWrite became " + this.regWrite);
     }
-    /*
-     * public void setALURegister(String register) { this.ALURegister =
-     * register; System.out.println("ALU Register is now " +this.ALURegister);
-     * if(register.length() > 3 && !register.equalsIgnoreCase("$zero")) {
-     * System.out.println("Computing the address "); String[] splittedAddress =
-     * register.split("\\("); Integer offset =
-     * Integer.parseInt(splittedAddress[0]); String effectiveRegister =
-     * splittedAddress[1].substring(0,3); System.out.println("the register is "
-     * + effectiveRegister); Integer registerData =
-     * this.registers.get(effectiveRegister); System.out.println("the register
-     * data is " +registerData); System.out.println("Setting address to "+
-     * (offset + registerData)); this.alu.setOp1(offset + registerData); } else
-     * { alu.setOp1(registers.get(register));
-     *
-     *
-     * }
-     * }
-     * public void setALU_MUXRegister(String register) { this.ALU_MUXRegister =
-     * register; System.out.println("ALU_MUX Register is now "
-     * +this.ALU_MUXRegister); this.registers.get(register); aluMUX.setInput(0,
-     * this.registers.get(register));
-     *
-     * }
-     * public void setWriteRegister(String register) { this.writeRegister =
-     * register; System.out.println("Write Register is now "
-     * +this.writeRegister);
-     *
-     * }
-     */
+
 
     /**
      * The method forwards the data wire to the memory

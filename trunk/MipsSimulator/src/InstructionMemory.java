@@ -405,8 +405,8 @@ public class InstructionMemory {
         //file.add("addi $t0 $t0 1");
         //file.add("jal 4");
         //file.add(" end");
-        file.add("ORG 100");
-       file.add("jal FACT");
+        /*file.add("ORG 100");
+        file.add("jal FACT");
         file.add("end");
         file.add("FACT: addi $sp $sp -8");
         file.add("sw $ra 4($sp)");
@@ -422,18 +422,18 @@ public class InstructionMemory {
         file.add("lw $ra 4($sp)");
         file.add("addi $sp $sp 8");
         file.add("add $v0 $a0 $v0");
-        file.add("jr $ra");
-        
+        file.add("jr $ra");*/
+        file.add("addi $zero $t1 0");
         // file.add("lw $t0 0($t0)");
 
 
 
         InstructionMemory is = new InstructionMemory(file);
-        System.out.println(is.registerFile.registers.get("$t0"));
+        System.out.println(is.registerFile.registers.get("$zero"));
         System.out.println(is.registerFile.registers.get("$t1"));
         System.out.println(is.registerFile.registers.get("$t2"));
         System.out.println(is.registerFile.registers.get("$ra"));
         System.out.println(is.registerFile.registers.get("$v0"));
-        is.printWiresLog();
+        //is.printWiresLog();
     }
 }
