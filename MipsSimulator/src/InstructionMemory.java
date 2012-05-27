@@ -84,6 +84,7 @@ public class InstructionMemory {
                 	System.out.println("adding " + split[0] + " => " + value);
                 	DATA.put(split[0], value);
                 }
+                j-=4;
                 
             } else if (line.contains(":")) {
                 String[] split = line.split(": ");
@@ -487,6 +488,10 @@ public class InstructionMemory {
     public static void testRecursiveCode() {
         ArrayList<String> file = new ArrayList<String>();
         file.add("ORG 100");
+        file.add(".data");
+        file.add("a: .word 0xFF");
+        file.add("b: .word 5");
+        file.add(".text");        
         file.add("jal FACT");
         file.add("end");
         file.add("FACT: addi $sp $sp -8");
@@ -534,10 +539,6 @@ public class InstructionMemory {
      */
     public static void testSubtractor() {
         ArrayList<String> file = new ArrayList<String>();
-//        file.add(".data");
-//        file.add("a: .word 0xFF");
-//        file.add("b: .word 5");
-//        file.add(".text");        
         file.add("addi $t0 $zero 1");
         file.add("addi $t1 $zero 5");
         file.add("CHECK: bne $t1 $zero LOOP");
