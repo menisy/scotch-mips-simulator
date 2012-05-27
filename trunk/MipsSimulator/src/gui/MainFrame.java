@@ -300,6 +300,7 @@ public class MainFrame extends javax.swing.JFrame {
             LinkedHashMap<Integer, Integer> dataMem = new LinkedHashMap<Integer, Integer>();
             reader = new BufferedReader(new StringReader(memoryArea.getText()));
             String line;
+            reader.readLine();
             while ((line = reader.readLine()) != null) {
                 String[] l = line.split(":");
                 Integer add = Integer.parseInt(l[0]);
