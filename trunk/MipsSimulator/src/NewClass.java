@@ -1,4 +1,4 @@
-run:
+/*run:
 Starting address is 0
 File size is 7
 putting in slot 0 instruction bne $t1 $t0 8
@@ -201,3 +201,4 @@ Data in wire From PC_MUX To PC set to  4
 4
 0
 BUILD SUCCESSFUL (total time: 1 second)
+*/

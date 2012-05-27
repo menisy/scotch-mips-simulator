@@ -1,4 +1,5 @@
 
+import java.beans.FeatureDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,11 +38,24 @@ public class RegistersFile {
         if (register.contains("(")) {
             String[] splittedAddress = register.split("\\(");
             Integer offset = Integer.parseInt(splittedAddress[0]);
+            /*
             String effectiveRegister = splittedAddress[1].substring(0, 3);
-            System.out.println("the register is " + effectiveRegister);
-            Integer registerData = this.registers.get(effectiveRegister);
-            System.out.println("the register data is " + registerData);
-            System.out.println("Setting address to " + (offset + registerData));
+            */
+            String effectiveRegister = splittedAddress[1].substring(0,splittedAddress[1].indexOf(')'));
+            Integer registerData; 
+            if (!effectiveRegister.startsWith("$")) {
+	            System.out.println("the memory vairable is " + effectiveRegister);
+            	registerData = InstructionMemory.DATA.get(effectiveRegister);
+            	
+	            System.out.println("the variable data is " + registerData);
+	            System.out.println("Setting address to " + (offset + registerData));
+            }else {
+	            System.out.println("the register is " + effectiveRegister);
+	            registerData = this.registers.get(effectiveRegister);
+            
+	            System.out.println("the register data is " + registerData);
+	            System.out.println("Setting address to " + (offset + registerData));
+            }
             this.ALUFirstOperand.setData(offset + registerData);
 
         } else {

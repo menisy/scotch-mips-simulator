@@ -8,13 +8,13 @@ import javax.security.sasl.AuthorizeCallback;
 
 public class InstructionMemory {
 
+    static HashMap<String, Integer> DATA = new HashMap<String, Integer>();
     static ArrayList<ArrayList<ArrayList<String>>> wiresLog = new ArrayList<ArrayList<ArrayList<String>>>();
     static int COMMANDS_COUNTER = 0;
     private int pc;
     boolean done;
     HashMap<Integer, String> instructions = new HashMap<Integer, String>();
     HashMap<String, Integer> labels = new HashMap<String, Integer>();
-    HashMap<String, Integer> data = new HashMap<String, Integer>();
     Organizer controller = new Organizer();
     Wire ALURegister = new Wire("Instruction Memory", "Register File", "", 0);
     Wire ALU_MUXRegister = new Wire("Instruction Memory", "Register File", "", 0);
@@ -68,21 +68,21 @@ public class InstructionMemory {
                 String[] split = line.split(": ",2);
                 System.out.println(Arrays.toString(split));     
                 if (split.length < 3 && split[1].startsWith(".word")) {
-                        int value = 0;
-                        String[] split2 = split[1].split(" ");
-                        System.out.println(Arrays.toString(split2));
-                        if (split2[1].startsWith("0x"))
-                        {
-                                // I am really sorry for the following line :'( 
-                                // it's the simplest. It's evil I know :'(, :'(
-                                BigInteger bi = new BigInteger(split2[1].substring(2), 16);
-                                value = bi.intValue();
-                        }else 
-                        {
-                                value = Integer.parseInt(split2[1]);
-                        }
-                        System.out.println("adding " + split[0] + " => " + value);
-                        data.put(split[0], value);
+                	int value = 0;
+                	String[] split2 = split[1].split(" ");
+                	System.out.println(Arrays.toString(split2));
+                	if (split2[1].startsWith("0x"))
+                	{
+                		// I am really sorry for the following line :'( 
+                		// it's the simplest. It's evil I know :'(, :'(
+                		BigInteger bi = new BigInteger(split2[1].substring(2), 16);
+                		value = bi.intValue();
+                	}else 
+                	{
+                		value = Integer.parseInt(split2[1]);
+                	}
+                	System.out.println("adding " + split[0] + " => " + value);
+                	DATA.put(split[0], value);
                 }
                 
             } else if (line.contains(":")) {
@@ -534,6 +534,10 @@ public class InstructionMemory {
      */
     public static void testSubtractor() {
         ArrayList<String> file = new ArrayList<String>();
+//        file.add(".data");
+//        file.add("a: .word 0xFF");
+//        file.add("b: .word 5");
+//        file.add(".text");        
         file.add("addi $t0 $zero 1");
         file.add("addi $t1 $zero 5");
         file.add("CHECK: bne $t1 $zero LOOP");
