@@ -1,6 +1,7 @@
 
-import gui.Animator;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.security.sasl.AuthorizeCallback;
@@ -11,9 +12,9 @@ public class InstructionMemory {
     static int COMMANDS_COUNTER = 0;
     private int pc;
     boolean done;
-    Animator animator;
     HashMap<Integer, String> instructions = new HashMap<Integer, String>();
     HashMap<String, Integer> labels = new HashMap<String, Integer>();
+    HashMap<String, Integer> data = new HashMap<String, Integer>();
     Organizer controller = new Organizer();
     Wire ALURegister = new Wire("Instruction Memory", "Register File", "", 0);
     Wire ALU_MUXRegister = new Wire("Instruction Memory", "Register File", "", 0);
@@ -30,6 +31,7 @@ public class InstructionMemory {
     Wire ALU_MUXSecondInput = new Wire("Instrucion Memory", "ALU_MUX", "", 0);
 
     public InstructionMemory(ArrayList<String> file) {
+        boolean containsOrg = false;
         this.memory = new DataMemory(this.regMUX, this);
         this.wiresLog.add(new ArrayList<ArrayList<String>>());
         this.pcMUX = new PC_MUX(this, this.PC_MUXOut);
@@ -44,26 +46,67 @@ public class InstructionMemory {
         }
         System.out.println("Starting address is " + startingAddress);
         System.out.println("File size is " + file.size());
+        boolean dataSeg = false;
         for (int i = 1, j = startingAddress; i <= file.size(); i++, j += 4) {
             String line = file.get(i - 1);
-            if (line.contains(":")) {
-                String[] split = line.split(": ");
+            // AUTHOR YAHIA
+            if (line.contains(".data")) {
+            	System.out.println("IN THE DATA SEGMENT");
+            	dataSeg = true;
+            	continue;
+            }
+            else if (line.contains(".text")) {
+            	System.out.println("IN THE TEXT SEGMENT");
+            	dataSeg = false;
+            	continue;
+            }
+            
+            if (dataSeg) {
+            	
+                String[] split = line.split(": ",2);
+                System.out.println(Arrays.toString(split));	
+                if (split.length < 3 && split[1].startsWith(".word")) {
+                	int value = 0;
+                	String[] split2 = split[1].split(" ");
+                	System.out.println(Arrays.toString(split2));
+                	if (split2[1].startsWith("0x"))
+                	{
+                		// I am really sorry for the following line :'( 
+                		// it's the simplest. It's evil I know :'(, :'(
+                		BigInteger bi = new BigInteger(split2[1].substring(2), 16);
+                		value = bi.intValue();
+                	}else 
+                	{
+                		value = Integer.parseInt(split2[1]);
+                	}
+                	System.out.println("adding " + split[0] + " => " + value);
+                	data.put(split[0], value);
+                }
+                
+            } else if (line.contains(":")) {
+                String[] split = line.split("[: ]");
                 System.out.println("adding labels " + split[0] + " to " + split[1] + " line (" + j + ")");
                 labels.put(split[0], j);
                 instructions.put(j, split[1]);
+                
+            // AUTHOR YAHIA END 
             } else {
-                if (file.get(i - 1).contains("ORG")) {
+                if(file.get(i - 1).contains("ORG"))
+                {
                     String[] splittedInstruction = file.get(i - 1).split(" ");
                     startingAddress = Integer.parseInt(splittedInstruction[1]);
-                    j -= 4;
-                } else {
-                    instructions.put(j, file.get(i - 1));
-                    System.out.println("putting in slot " + j + " instruction " + file.get(i - 1));
+                    containsOrg = true;
+                    j -=4;
                 }
-
-
-
-
+                else
+                {
+                                   instructions.put(j, file.get(i - 1));
+                System.out.println("putting in slot " + j + " instruction " + file.get(i - 1));
+                }
+             
+           
+                
+        
             }
         }
         controller.setInstances(alu, aluMUX, registerFile, this, regMUX, memory, this.pcMUX);
@@ -71,10 +114,6 @@ public class InstructionMemory {
         alu.setInstances(controller, registerFile, regMUX, memory);
         this.PC_MUXOut.setData(startingAddress);
         this.start();
-    }
-
-    public void setAnimator(Animator anim){
-        animator = anim;
     }
 
     /**
@@ -325,12 +364,12 @@ public class InstructionMemory {
             this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
             this.registerFile.setFirstOperandDestination();
-        }
+        } 
         if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw") || arr[0].equalsIgnoreCase("jal"))) {
             this.aluMUX.forward();
         }
-
-        this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU FIRST INPUT: " + this.ALURegister.toString());
+       
+                    this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU FIRST INPUT: " + this.ALURegister.toString());
         this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU MUX INPUT: " + this.ALU_MUXRegister.toString());
         this.wiresLog.get(COMMANDS_COUNTER).get(1).add("WRITE REGISTER: " + this.WriteRegister.toString());
         this.wiresLog.get(COMMANDS_COUNTER).get(1).add("JUMP: " + this.jump.toString());
@@ -339,7 +378,7 @@ public class InstructionMemory {
 
         this.alu.doOperation();
         this.pcMUX.forward();
-
+        
 
 
     }
@@ -378,29 +417,39 @@ public class InstructionMemory {
         }
         System.out.println("The program used " + cycles + " cycles");
     }
-     public void getWireLogGUI() throws InterruptedException{
-        int cycles = 0;
-        for (int i = 0; i < this.wiresLog.size(); i++) {
-            System.out.println("For command " + i);
-            for (int j = 0; j < this.wiresLog.get(i).size(); j++) {
-                cycles++;
-                System.out.println("For Cycle " + j);
-                Thread.sleep(animator.getSleepTime());
-                for (int k = 0; k < this.wiresLog.get(i).get(j).size(); k++) {
-                    System.out.println(this.wiresLog.get(i).get(j).get(k));
-                }
-            }
-        }
-        System.out.println("The program used " + cycles + " cycles");
-    }
 
-    /**
-     * The method uses the factorial logic to add numbers to each other instead
-     * of multiplying FACT(4) = 4 + FACT(3) FACT(0) = 1 FACT(1) = 1
-     */
-    public static void testRecursiveCode() {
+    public static void main(String[] abbas) {
         ArrayList<String> file = new ArrayList<String>();
-        file.add("ORG 100");
+        /*
+         * file.add("sll $t0 $t0 1"); file.add("add $t0 $t0 $t0"); file.add("sub
+         * $t1 $t0 $t0");
+         *
+         * file.add("or $t0 $t0 $t0"); file.add("and $t0 $t0 $t0"); file.add("sw
+         * $t0 12($t0)"); file.add("lw $t1 12($t0)"); file.add("addi $t1 $t1
+         * 1"); file.add("sltui $t2 $t1 -3"); // file.add("and $t1 $t0 $t0");
+         */
+        //file.add("add $t0 $t0 $t0");
+        //  file.add("bne $t1 $t0 8");
+        // file.add("end");
+        //file.add("addi $t1 $t0 2");
+        //file.add("addi $t0 $t0 1");
+        // the following instruction won't be executed, we used branch dumbass!
+        // file.add("ZA3: add $t2 $zero $t0");
+        // file.add("jal 4");
+        // file.add("addi $t1 $t1 1");
+        //  file.add("end");
+        // file.add("addi $t0 $zero 0");
+        //file.add("slti $t2 $t0 10");
+        //file.add("beq $t2 $zero 22");
+        //file.add("add $s0 $s0 $s1");
+        //file.add("addi $t0 $t0 1");
+        //file.add("jal 4");
+        //file.add(" end");
+        file.add(".data");
+        file.add("a: .word 0xFF");
+        file.add("b: .word 5");
+        
+        file.add(".text");
         file.add("jal FACT");
         file.add("end");
         file.add("FACT: addi $sp $sp -8");
@@ -418,53 +467,17 @@ public class InstructionMemory {
         file.add("addi $sp $sp 8");
         file.add("add $v0 $a0 $v0");
         file.add("jr $ra");
+        file.add("addi $zero $t1 0");
+        // file.add("lw $t0 0($t0)");
+
+
+
         InstructionMemory is = new InstructionMemory(file);
-        is.printWiresLog();
-
-    }
-
-    /**
-     * The method tests the functionality of arithmetic instructions.
-     */
-    public static void testArithmeticInstructions() {
-        ArrayList<String> file = new ArrayList<String>();
-        file.add("sll $t0 $t0 2");
-        file.add("srl $t1 $t0 2");
-        file.add("and $t2 $t1 $t0");
-        file.add("andi $t3 $t0 2");
-        file.add("or $t4 $t3 $t2");
-        file.add("ori $t5 $t4 5");
-        file.add("nor $t6 $t5 $t4");
-        file.add("slt $s0 $t0 $t4");
-        file.add("sltui $s1 $t0 2");
-        file.add("sltu $s2 $s1 $s0");
-        InstructionMemory is = new InstructionMemory(file);
-        is.printWiresLog();
-    }
-
-    /**
-     * The Method keeps subtracting one from t1, until $t1 becomes 0
-     */
-    public static void testSubtractor() {
-        ArrayList<String> file = new ArrayList<String>();
-        file.add("addi $t0 $zero 1");
-        file.add("addi $t1 $zero 5");
-        file.add("CHECK: bne $t1 $zero LOOP");
-        file.add("LOOP: sub $t1 $t1 $t0");
-        file.add("beq $t1 $zero END");
-        file.add("j CHECK");
-        file.add("END: end");
-        InstructionMemory is = new InstructionMemory(file);
-        is.printWiresLog();
-
-
-    }
-
-    public static void main(String[] abbas) {
-
-        testRecursiveCode();
-        testArithmeticInstructions();
-        testSubtractor();
-
+        System.out.println(is.registerFile.registers.get("$zero"));
+        System.out.println(is.registerFile.registers.get("$t1"));
+        System.out.println(is.registerFile.registers.get("$t2"));
+        System.out.println(is.registerFile.registers.get("$ra"));
+        System.out.println(is.registerFile.registers.get("$v0"));
+        //is.printWiresLog();
     }
 }
