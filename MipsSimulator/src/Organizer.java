@@ -278,6 +278,13 @@ public class Organizer {
             this.registerWrite.setData(0);
             registers.setRegWriteControl(this.registerWrite);
         }
+        instructionMemory.wiresLog.get(instructionMemory.COMMANDS_COUNTER).get(1).add("ALU CONTROL: " + this.ALUControl.toString());
+        instructionMemory.wiresLog.get(instructionMemory.COMMANDS_COUNTER).get(1).add("ALU MUX CONTROL: " + this.ALU_MUXControl.toString());
+        instructionMemory.wiresLog.get(instructionMemory.COMMANDS_COUNTER).get(1).add("PC MUX CONTROL: " + this.PC_MUXControl.toString());
+        instructionMemory.wiresLog.get(instructionMemory.COMMANDS_COUNTER).get(1).add("REG MUX CONTROL: " + this.REG_MUXControl.toString());
+        instructionMemory.wiresLog.get(instructionMemory.COMMANDS_COUNTER).get(1).add("MEMORY READ: " + this.readWire.toString());
+        instructionMemory.wiresLog.get(instructionMemory.COMMANDS_COUNTER).get(1).add("MEMORY WRITE: " + this.writeWire.toString());
+        instructionMemory.wiresLog.get(instructionMemory.COMMANDS_COUNTER).get(1).add("REGISTER WRITE: " + this.registerWrite.toString());
         this.setRegisterWriteControl();
     }
     //TODO, Change this to wires.
