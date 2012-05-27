@@ -346,6 +346,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void clearButtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtActionPerformed
         // TODO add your handling code here:
         memoryArea.setText("");
+        programArea.setText("");
         InstructionMemory = new InstructionMemory();
         registersPanel.removeAll();
         registers.clear();
