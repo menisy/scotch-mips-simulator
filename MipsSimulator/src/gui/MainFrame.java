@@ -8,8 +8,26 @@
  *
  * Created on May 27, 2012, 6:22:05 PM
  */
-
 package gui;
+
+import java.awt.FlowLayout;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import logic.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -17,9 +35,38 @@ package gui;
  */
 public class MainFrame extends javax.swing.JFrame {
 
+    InstructionMemory InstructionMemory;
+    LinkedHashMap<JLabel, JTextField> registers = new LinkedHashMap<JLabel, JTextField>();
+    LinkedHashMap<String, String> memoryFields = new LinkedHashMap<String, String>();
+    int memorySize = 512; //512 words, setting default memory size to 2 GB.
+
     /** Creates new form MainFrame */
     public MainFrame() {
         initComponents();
+        InstructionMemory = new InstructionMemory();
+        initRegisters();
+        initMemory();
+    }
+
+    public void initRegisters() {
+        HashMap<String, Integer> regs = InstructionMemory.getRegisters();
+        for (Map.Entry<String, Integer> entry : regs.entrySet()) {
+            String key = entry.getKey();
+            JLabel lbl = new JLabel(key);
+            JTextField tf = new JTextField("0");
+            if (key.equals("$s0")) {
+                tf.setEditable(false);
+            }
+            lbl.setSize(40, 20);
+            registers.put(lbl, tf);
+            registersPanel.add(lbl);
+            registersPanel.add(tf);
+        }
+
+    }
+
+    public void initMemory() {
+        memoryArea.append("Address : Value");
     }
 
     /** This method is called from within the constructor to
@@ -31,34 +78,338 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLayeredPane1 = new javax.swing.JLayeredPane();
+        warningLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        programArea = new javax.swing.JTextArea();
+        registersPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        memoryArea = new javax.swing.JTextArea();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        addressField = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        valueField = new javax.swing.JTextField();
+        addButton = new javax.swing.JButton();
+        clearButt = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        fileOption = new javax.swing.JMenu();
+        openItem = new javax.swing.JMenuItem();
+        exitItem = new javax.swing.JMenuItem();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        warningLabel.setForeground(new java.awt.Color(255, 0, 51));
+        warningLabel.setBounds(20, 550, 310, 14);
+        jLayeredPane1.add(warningLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        programArea.setColumns(20);
+        programArea.setRows(5);
+        jScrollPane1.setViewportView(programArea);
+
+        jScrollPane1.setBounds(20, 20, 750, 520);
+        jLayeredPane1.add(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        registersPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        registersPanel.setLayout(new java.awt.GridLayout(0, 2));
+        registersPanel.setBounds(780, 40, 90, 530);
+        jLayeredPane1.add(registersPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        memoryArea.setColumns(20);
+        memoryArea.setEditable(false);
+        memoryArea.setRows(5);
+        jScrollPane2.setViewportView(memoryArea);
+
+        jScrollPane2.setBounds(880, 40, 100, 410);
+        jLayeredPane1.add(jScrollPane2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jButton1.setText("Assemble");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jButton1.setBounds(570, 550, 100, 23);
+        jLayeredPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jButton2.setText("Run");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jButton2.setBounds(680, 550, 90, 23);
+        jLayeredPane1.add(jButton2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setText("Registers");
+        jLabel1.setBounds(800, 20, 57, 15);
+        jLayeredPane1.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel2.setText("Memory");
+        jLabel2.setBounds(910, 20, 49, 15);
+        jLayeredPane1.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setText("Add to memory:");
+        jLabel3.setBounds(880, 470, 100, 15);
+        jLayeredPane1.add(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel4.setText("Address:");
+        jLabel4.setBounds(880, 490, 43, 14);
+        jLayeredPane1.add(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        addressField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addressFieldActionPerformed(evt);
+            }
+        });
+        addressField.setBounds(930, 490, 60, 20);
+        jLayeredPane1.add(addressField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel5.setText("Value:");
+        jLabel5.setBounds(880, 520, 34, 14);
+        jLayeredPane1.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        valueField.setBounds(930, 520, 60, 20);
+        jLayeredPane1.add(valueField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
+        addButton.setBounds(920, 550, 70, 23);
+        jLayeredPane1.add(addButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        clearButt.setText("Clear");
+        clearButt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtActionPerformed(evt);
+            }
+        });
+        clearButt.setBounds(480, 550, 80, 23);
+        jLayeredPane1.add(clearButt, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        fileOption.setText("File");
+
+        openItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openItem.setText("Open");
+        openItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openItemActionPerformed(evt);
+            }
+        });
+        fileOption.add(openItem);
+
+        exitItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        exitItem.setText("Exit");
+        exitItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitItemActionPerformed(evt);
+            }
+        });
+        fileOption.add(exitItem);
+
+        jMenuBar1.add(fileOption);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-    * @param args the command line arguments
-    */
+     * Specifies the action to be performed when choosing the open item from the file menu
+     * this method open a file chooser dialogue which is filter by file types txt and asm
+     * If the wrong file type is chosen a warning is displayed. Otherwise, the file is
+     * added to the text Area where it can be edited before the user chooses to run the
+     * simulation.
+     */
+    private void openItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openItemActionPerformed
+        // TODO add your handling code here:
+        warningLabel.setText("");
+        JFileChooser chooser = new javax.swing.JFileChooser();
+
+        chooser.setDialogTitle("Choose File");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("txt, asm", "txt", "asm");
+        chooser.setFileFilter(filter);
+        chooser.setFileHidingEnabled(true);
+        int returnVal = chooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String name = chooser.getSelectedFile().getName();
+            String ext = name.substring(name.length() - 4);
+            if (!ext.contains("txt") && !ext.contains("asm")) {
+                warningLabel.setText("Wrong file format!");
+                return;
+            }
+            try {
+                String path = chooser.getSelectedFile().getPath();
+                FileReader fr = new FileReader(path);
+                BufferedReader br = new BufferedReader(fr);
+                String s;
+                while ((s = br.readLine()) != null) {
+                    programArea.append(s);
+                    programArea.append("\n");
+                }
+                fr.close();
+            } catch (Exception e) {
+                warningLabel.setText("Error occured while reading your file. Please try again.");
+            }
+        }
+    }//GEN-LAST:event_openItemActionPerformed
+    /**
+     * Exits the program upon choosing exit option from the file menu.
+     */
+    private void exitItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitItemActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+        this.dispose();
+    }//GEN-LAST:event_exitItemActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            // TODO add your handling code here:
+            String s = programArea.getText();
+            ArrayList<String> prog = new ArrayList<String>();
+            BufferedReader reader = new BufferedReader(new StringReader(s));
+            try {
+                String ss;
+                while ((ss = reader.readLine()) != null) {
+                    prog.add(ss);
+                }
+            } catch (Exception e) {
+                warningLabel.setText("Error occured");
+            }
+            LinkedHashMap<Integer, Integer> dataMem = new LinkedHashMap<Integer, Integer>();
+            reader = new BufferedReader(new StringReader(memoryArea.getText()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] l = line.split(":");
+                Integer add = Integer.parseInt(l[0]);
+                Integer val = Integer.parseInt(l[1]);
+                dataMem.put(add, val);
+            }
+            LinkedHashMap<String, Integer> regs = new LinkedHashMap<String,Integer>();
+        for (Map.Entry<JLabel, JTextField> entry : registers.entrySet()) {
+            String key = entry.getKey().getText();
+            JTextField tf = registers.get(entry.getKey());
+            Integer val = Integer.parseInt(tf.getText());
+            regs.put(key, val);
+        }
+            InstructionMemory.setRegisters(regs);
+            InstructionMemory.setMemory(dataMem);
+            InstructionMemory.setFile(prog);
+        } catch (IOException ex) {
+           warningLabel.setText("Error occured!");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void addressFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addressFieldActionPerformed
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        // TODO add your handling code here:
+        warningLabel.setText("");
+        String add = addressField.getText();
+        String val = valueField.getText();
+        if (!isDigit(add) || !isDigit(val)) {
+            warningLabel.setText("Please enter a number!");
+            return;
+        }
+        if (!memoryFields.containsKey(add)) {
+            memoryArea.append("\n"+add + " : " + val);
+            memoryFields.put(add, val);
+        } else {
+            warningLabel.setText("Address already exits, clear the memory if you need to reset it!");
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void clearButtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtActionPerformed
+        // TODO add your handling code here:
+        memoryArea.setText("");
+        InstructionMemory = new InstructionMemory();
+        registersPanel.removeAll();
+        registers.clear();
+        memoryFields.clear();
+        initRegisters();
+        initMemory();
+    }//GEN-LAST:event_clearButtActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        JFrame result = new JFrame("Simulation result");
+        result.setLayout(new FlowLayout());
+        ArrayList<String> resultList = InstructionMemory.getWireLogGUI();
+        JTextArea ta = new JTextArea();
+        for(String s : resultList){
+            ta.append(s);
+        }
+        result.add(ta);
+        result.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private boolean isDigit(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if ("0123456789".indexOf(s.charAt(i)) == -1) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    /**
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new MainFrame().setVisible(true);
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addButton;
+    private javax.swing.JTextField addressField;
+    private javax.swing.JButton clearButt;
+    private javax.swing.JMenuItem exitItem;
+    private javax.swing.JMenu fileOption;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea memoryArea;
+    private javax.swing.JMenuItem openItem;
+    private javax.swing.JTextArea programArea;
+    private javax.swing.JPanel registersPanel;
+    private javax.swing.JTextField valueField;
+    private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
-
 }
