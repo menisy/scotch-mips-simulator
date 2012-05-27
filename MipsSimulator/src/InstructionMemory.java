@@ -51,38 +51,38 @@ public class InstructionMemory {
             String line = file.get(i - 1);
             // AUTHOR YAHIA
             if (line.contains(".data")) {
-            	System.out.println("IN THE DATA SEGMENT");
-            	dataSeg = true;
-            	j-=4;
-            	continue;
+                System.out.println("IN THE DATA SEGMENT");
+                dataSeg = true;
+                j-=4;
+                continue;
             }
             else if (line.contains(".text")) {
-            	System.out.println("IN THE TEXT SEGMENT");
-            	dataSeg = false;
-            	j-=4;
-            	continue;
+                System.out.println("IN THE TEXT SEGMENT");
+                dataSeg = false;
+                j-=4;
+                continue;
             }
             
-            if (dataSeg) {            	
-            	System.out.println("$$$$$$$$$$$$$ IN DATA SEG");
+            if (dataSeg) {              
+                System.out.println("$$$$$$$$$$$$$ IN DATA SEG");
                 String[] split = line.split(": ",2);
-                System.out.println(Arrays.toString(split));	
+                System.out.println(Arrays.toString(split));     
                 if (split.length < 3 && split[1].startsWith(".word")) {
-                	int value = 0;
-                	String[] split2 = split[1].split(" ");
-                	System.out.println(Arrays.toString(split2));
-                	if (split2[1].startsWith("0x"))
-                	{
-                		// I am really sorry for the following line :'( 
-                		// it's the simplest. It's evil I know :'(, :'(
-                		BigInteger bi = new BigInteger(split2[1].substring(2), 16);
-                		value = bi.intValue();
-                	}else 
-                	{
-                		value = Integer.parseInt(split2[1]);
-                	}
-                	System.out.println("adding " + split[0] + " => " + value);
-                	data.put(split[0], value);
+                        int value = 0;
+                        String[] split2 = split[1].split(" ");
+                        System.out.println(Arrays.toString(split2));
+                        if (split2[1].startsWith("0x"))
+                        {
+                                // I am really sorry for the following line :'( 
+                                // it's the simplest. It's evil I know :'(, :'(
+                                BigInteger bi = new BigInteger(split2[1].substring(2), 16);
+                                value = bi.intValue();
+                        }else 
+                        {
+                                value = Integer.parseInt(split2[1]);
+                        }
+                        System.out.println("adding " + split[0] + " => " + value);
+                        data.put(split[0], value);
                 }
                 
             } else if (line.contains(":")) {
@@ -206,6 +206,7 @@ public class InstructionMemory {
 
         if (op.equalsIgnoreCase("add")) {
             this.controllerWire.setData(1);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -219,6 +220,7 @@ public class InstructionMemory {
             //this.registerFile.setSecondOperandDestination(arr[3]);
         } else if (op.equalsIgnoreCase("addi")) {
             this.controllerWire.setData(2);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setData(this.registerFile.registers.get(arr[2]));
@@ -228,6 +230,7 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("sub")) {
             this.controllerWire.setData(3);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -239,12 +242,14 @@ public class InstructionMemory {
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("lw")) {
             this.controllerWire.setData(4);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setDestinationRegister(arr[2]);
             this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("sw")) {
             this.controllerWire.setData(5);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             ALURegister.setDestinationRegister(arr[2]);
             ALU_MUXRegister.setDestinationRegister(arr[1]);
@@ -253,6 +258,7 @@ public class InstructionMemory {
             registerFile.forward();
         } else if (op.equalsIgnoreCase("sll")) {
             this.controllerWire.setData(6);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setData(this.registerFile.registers.get(arr[2]));
@@ -262,6 +268,7 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("srl")) {
             this.controllerWire.setData(7);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setData(this.registerFile.registers.get(arr[2]));
@@ -271,6 +278,7 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("and")) {
             this.controllerWire.setData(8);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -282,6 +290,7 @@ public class InstructionMemory {
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("andi")) {
             this.controllerWire.setData(9);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setData(this.registerFile.registers.get(arr[2]));
@@ -291,6 +300,7 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("or")) {
             this.controllerWire.setData(10);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -302,6 +312,7 @@ public class InstructionMemory {
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("ori")) {
             this.controllerWire.setData(11);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setData(this.registerFile.registers.get(arr[2]));
@@ -311,6 +322,7 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("nor")) {
             this.controllerWire.setData(12);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -322,6 +334,7 @@ public class InstructionMemory {
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("beq")) {
             this.controllerWire.setData(13);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             ALU_MUXRegister.setDestinationRegister(arr[2]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[2]));
@@ -334,6 +347,7 @@ public class InstructionMemory {
             this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("bne")) {
             this.controllerWire.setData(14);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             ALU_MUXRegister.setDestinationRegister(arr[2]);
             ALU_MUXRegister.setData(this.registerFile.registers.get(arr[2]));
@@ -345,11 +359,13 @@ public class InstructionMemory {
             this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("j")) {
             this.controllerWire.setData(15);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             this.jump.setData(getJumpValue(arr[1]));
             this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("jal")) {
             this.controllerWire.setData(16);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister("$ra");
             WriteRegister.setData(this.PC_MUXOut.getData());
@@ -362,11 +378,13 @@ public class InstructionMemory {
 
         } else if (op.equalsIgnoreCase("jr")) {
             this.controllerWire.setData(17);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             this.jump.setData(this.registerFile.registers.get(arr[1]));
             this.pcMUX.setInput(1, jump);
         } else if (op.equalsIgnoreCase("slt")) {
             this.controllerWire.setData(18);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -378,6 +396,7 @@ public class InstructionMemory {
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("slti")) {
             this.controllerWire.setData(19);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setData(this.registerFile.registers.get(arr[2]));
@@ -387,6 +406,7 @@ public class InstructionMemory {
             this.registerFile.setFirstOperandDestination();
         } else if (op.equalsIgnoreCase("sltu")) {
             this.controllerWire.setData(20);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             WriteRegister.setData(this.registerFile.registers.get(arr[1]));
@@ -398,6 +418,7 @@ public class InstructionMemory {
             this.registerFile.setSecondOperandDestination();
         } else if (op.equalsIgnoreCase("sltui")) {
             this.controllerWire.setData(21);
+            this.wiresLog.get(COMMANDS_COUNTER).get(1).add("CONTROLLER WIRE: " + this.controllerWire.toString());
             this.controller.setControls();
             WriteRegister.setDestinationRegister(arr[1]);
             ALURegister.setData(this.registerFile.registers.get(arr[2]));
