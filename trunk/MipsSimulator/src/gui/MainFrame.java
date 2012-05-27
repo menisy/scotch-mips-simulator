@@ -11,6 +11,7 @@
 package gui;
 
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.io.IOException;
 import logic.*;
 import java.io.BufferedReader;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -99,8 +101,13 @@ public class MainFrame extends javax.swing.JFrame {
         fileOption = new javax.swing.JMenu();
         openItem = new javax.swing.JMenuItem();
         exitItem = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        rec = new javax.swing.JMenuItem();
+        arith = new javax.swing.JMenuItem();
+        sub = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Scotch Mips Simulator");
 
         warningLabel.setForeground(new java.awt.Color(255, 0, 51));
         warningLabel.setBounds(20, 550, 310, 14);
@@ -161,8 +168,9 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel3.setBounds(880, 470, 100, 15);
         jLayeredPane1.add(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel4.setText("Address:");
-        jLabel4.setBounds(880, 490, 43, 14);
+        jLabel4.setBounds(880, 490, 40, 13);
         jLayeredPane1.add(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         addressField.addActionListener(new java.awt.event.ActionListener() {
@@ -173,8 +181,9 @@ public class MainFrame extends javax.swing.JFrame {
         addressField.setBounds(930, 490, 60, 20);
         jLayeredPane1.add(addressField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel5.setText("Value:");
-        jLabel5.setBounds(880, 520, 34, 14);
+        jLabel5.setBounds(880, 520, 34, 13);
         jLayeredPane1.add(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
         valueField.setBounds(930, 520, 60, 20);
         jLayeredPane1.add(valueField, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -218,6 +227,34 @@ public class MainFrame extends javax.swing.JFrame {
         fileOption.add(exitItem);
 
         jMenuBar1.add(fileOption);
+
+        jMenu1.setText("Demo programs");
+
+        rec.setText("Recursion");
+        rec.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                recActionPerformed(evt);
+            }
+        });
+        jMenu1.add(rec);
+
+        arith.setText("Arithmetic");
+        arith.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                arithActionPerformed(evt);
+            }
+        });
+        jMenu1.add(arith);
+
+        sub.setText("Subtractor");
+        sub.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subActionPerformed(evt);
+            }
+        });
+        jMenu1.add(sub);
+
+        jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
 
@@ -358,17 +395,37 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         JFrame result = new JFrame("Simulation result");
-        result.setLayout(new FlowLayout());
+        result.setLayout(null);
         JScrollPane scpane = new JScrollPane();
+        scpane.setSize(750,600);
         ArrayList<String> resultList = InstructionMemory.getWireLogGUI();
         JTextArea ta = new JTextArea();
         for(String s : resultList){
-            ta.append(s);
+            ta.append(s+"\n");
         }
-        scpane.add(ta);
-        result.add(scpane);
+        scpane.setViewportView(ta);
+        result.getContentPane().add(scpane);
+        result.setSize(760,640);
         result.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void recActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recActionPerformed
+        // TODO add your handling code here:
+        InstructionMemory.testRecursiveCode();
+        this.jButton2ActionPerformed(evt);
+    }//GEN-LAST:event_recActionPerformed
+
+    private void arithActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arithActionPerformed
+        // TODO add your handling code here:
+        InstructionMemory.testArithmeticInstructions();
+        this.jButton2ActionPerformed(evt);
+    }//GEN-LAST:event_arithActionPerformed
+
+    private void subActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subActionPerformed
+        // TODO add your handling code here:
+        InstructionMemory.testSubtractor();
+        this.jButton2ActionPerformed(evt);
+    }//GEN-LAST:event_subActionPerformed
 
     private boolean isDigit(String s) {
         for (int i = 0; i < s.length(); i++) {
@@ -394,6 +451,7 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JTextField addressField;
+    private javax.swing.JMenuItem arith;
     private javax.swing.JButton clearButt;
     private javax.swing.JMenuItem exitItem;
     private javax.swing.JMenu fileOption;
@@ -405,13 +463,16 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea memoryArea;
     private javax.swing.JMenuItem openItem;
     private javax.swing.JTextArea programArea;
+    private javax.swing.JMenuItem rec;
     private javax.swing.JPanel registersPanel;
+    private javax.swing.JMenuItem sub;
     private javax.swing.JTextField valueField;
     private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
