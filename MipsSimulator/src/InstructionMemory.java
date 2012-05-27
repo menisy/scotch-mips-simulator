@@ -28,6 +28,7 @@ public class InstructionMemory {
     Wire ALU_MUXSecondInput = new Wire("Instrucion Memory", "ALU_MUX", "", 0);
 
     public InstructionMemory(ArrayList<String> file) {
+        boolean containsOrg = false;
         this.memory = new DataMemory(this.regMUX, this);
         this.wiresLog.add(new ArrayList<ArrayList<String>>());
         this.pcMUX = new PC_MUX(this, this.PC_MUXOut);
@@ -50,13 +51,28 @@ public class InstructionMemory {
                 labels.put(split[0], j);
                 instructions.put(j, split[1]);
             } else {
-                instructions.put(j, file.get(i - 1));
+                if(file.get(i - 1).contains("ORG"))
+                {
+                    String[] splittedInstruction = file.get(i - 1).split(" ");
+                    startingAddress = Integer.parseInt(splittedInstruction[1]);
+                    containsOrg = true;
+                    j -=4;
+                }
+                else
+                {
+                                   instructions.put(j, file.get(i - 1));
                 System.out.println("putting in slot " + j + " instruction " + file.get(i - 1));
+                }
+             
+           
+                
+        
             }
         }
         controller.setInstances(alu, aluMUX, registerFile, this, regMUX, memory, this.pcMUX);
         registerFile.setInstances(alu, aluMUX, memory);
         alu.setInstances(controller, registerFile, regMUX, memory);
+        this.PC_MUXOut.setData(startingAddress);
         this.start();
     }
 
@@ -308,11 +324,12 @@ public class InstructionMemory {
             this.ALU_MUXSecondInput.setData(Integer.parseInt(arr[3]));
             this.aluMUX.setInput(1, this.ALU_MUXSecondInput);
             this.registerFile.setFirstOperandDestination();
-        }
+        } 
         if (!(arr[0].equalsIgnoreCase("sw") || arr[0].equalsIgnoreCase("lw") || arr[0].equalsIgnoreCase("jal"))) {
             this.aluMUX.forward();
         }
-        this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU FIRST INPUT: " + this.ALURegister.toString());
+       
+                    this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU FIRST INPUT: " + this.ALURegister.toString());
         this.wiresLog.get(COMMANDS_COUNTER).get(1).add("ALU MUX INPUT: " + this.ALU_MUXRegister.toString());
         this.wiresLog.get(COMMANDS_COUNTER).get(1).add("WRITE REGISTER: " + this.WriteRegister.toString());
         this.wiresLog.get(COMMANDS_COUNTER).get(1).add("JUMP: " + this.jump.toString());
@@ -321,6 +338,8 @@ public class InstructionMemory {
 
         this.alu.doOperation();
         this.pcMUX.forward();
+        
+
 
     }
 
@@ -386,7 +405,8 @@ public class InstructionMemory {
         //file.add("addi $t0 $t0 1");
         //file.add("jal 4");
         //file.add(" end");
-        file.add("jal FACT");
+        file.add("ORG 100");
+       file.add("jal FACT");
         file.add("end");
         file.add("FACT: addi $sp $sp -8");
         file.add("sw $ra 4($sp)");
@@ -403,6 +423,7 @@ public class InstructionMemory {
         file.add("addi $sp $sp 8");
         file.add("add $v0 $a0 $v0");
         file.add("jr $ra");
+        
         // file.add("lw $t0 0($t0)");
 
 
